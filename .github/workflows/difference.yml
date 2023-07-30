@@ -13,7 +13,6 @@ jobs:
       - name: cdk bootstrap
         id: bootstrap
         run: |
-          apk --update --no-cache add nodejs~18 npm python3 py3-pip jq curl bash git docker && ln -sf /usr/bin/python3 /usr/bin/python
           echo "::add-mask::$AWS_ACCOUNT_ID"
           cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_DEFAULT_REGION
         env:
