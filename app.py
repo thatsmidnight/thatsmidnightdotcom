@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # Builtin
-from os import environ
+from os import environ, getenv
 
 # Third Party
 from aws_cdk import App
-from dotenv import load_dotenv
 
-load_dotenv()
+if getenv("IS_LOCAL"):
+    from dotenv import load_dotenv
+
+    load_dotenv()
 
 # Library
 from cdk import enums

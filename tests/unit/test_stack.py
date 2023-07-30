@@ -3,6 +3,7 @@ import aws_cdk.assertions as assertions
 
 from cdk.stacks import MyStaticSiteStack as MyStack
 
+
 def test_s3_bucket_created():
     app = core.App()
     stack = MyStack(app, "thatsmidnightdotcom", stack_name="test-stack-name")
