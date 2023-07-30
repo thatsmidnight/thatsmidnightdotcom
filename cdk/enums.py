@@ -27,6 +27,7 @@ class BaseEnum(Enum):
 
 class MyDomainName(Enum):
     domain_name = "thatsmidnight.com"
+    subdomain_name = "www.thatsmidnight.com"
 
 
 class CDKStackRegion(Enum):

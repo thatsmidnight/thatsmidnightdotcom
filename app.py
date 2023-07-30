@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Builtin
 from os import environ
 
