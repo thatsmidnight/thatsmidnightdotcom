@@ -21,7 +21,7 @@ class MyEnvironment(Environment):
     def __init__(self, *, account: str = None, region: str = None) -> None:
         account = getenv("AWS_ACCOUNT_ID") if not account else account
         region = getenv("AWS_DEFAULT_REGION") if not region else region
-        super(MyEnvironment, self).__init__(account=account, region=region)
+        super().__init__(account=account, region=region)
 
 
 class MyStaticSiteStack(Stack):
@@ -34,9 +34,10 @@ class MyStaticSiteStack(Stack):
         id: str,
         *,
         stack_name: str,
+        **kwargs,
     ) -> None:
-        super(MyStaticSiteStack, self).__init__(
-            scope, id, env=self.MY_ENV, stack_name=stack_name
+        super().__init__(
+            scope, id, env=self.MY_ENV, stack_name=stack_name, **kwargs
         )
 
         # Create S3 bucket
