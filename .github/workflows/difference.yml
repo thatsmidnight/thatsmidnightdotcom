@@ -45,10 +45,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Bootstrap
-      run: |
-        cdk bootstrap
-
     - name: Diff
       run: |
         cdk diff
