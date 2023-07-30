@@ -1,0 +1,43 @@
+# This is a simple workflow to deploy a CDK stack
+
+name: Deploy CDK Stack
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  aws_cdk:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: cdk diff
+      uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+      with:
+        cdk_subcommand: 'diff'
+        actions_comment: true
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
+
+    - name: cdk deploy
+      uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+      with:
+        cdk_subcommand: 'deploy'
+        cdk_args: '--require-approval never'
+        actions_comment: false
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
+
+    - name: cdk synth
+      uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+      with:
+        cdk_subcommand: 'synth'
+        working_dir: './'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
