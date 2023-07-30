@@ -12,12 +12,13 @@ jobs:
     steps:
       - name: cdk bootstrap
         id: bootstrap
-        run: |
-          echo "::add-mask::$AWS_ACCOUNT_ID"
-          cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_DEFAULT_REGION
+        uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+        with:
+          cdk_subcommand: 'bootstrap'
+          cdk_args: 'aws://117580903444/us-east-1'
+          actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
@@ -44,4 +45,5 @@ jobs:
           author_name: GitHubActions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: steps.diff.outputs.status_code == 1
