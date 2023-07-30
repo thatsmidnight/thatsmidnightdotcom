@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Builtin
-from os import environ, getenv
+from os import environ
 
 # Third Party
 from aws_cdk import App
