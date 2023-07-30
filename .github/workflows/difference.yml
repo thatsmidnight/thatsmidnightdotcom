@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: cdk bootstrap
         id: bootstrap
-        uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+        uses: youyo/aws-cdk-github-actions@v2.1.4
         with:
           cdk_subcommand: 'bootstrap'
           cdk_args: 'aws://117580903444/us-east-1'
@@ -25,25 +25,14 @@ jobs:
 
       - name: cdk diff
         id: diff
-        uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
+        uses: youyo/aws-cdk-github-actions@v2.1.4
         with:
           cdk_subcommand: 'diff'
           cdk_args: '--app "python app.py"'
-          cdk_stack: 'MyStaticSiteStack'
+          cdk_stack: 'my-static-website-stack'
           actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
-
-      # https://github.com/marketplace/actions/action-slack
-      - name: notify slack
-        uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: GitHubActions
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: steps.diff.outputs.status_code == 1
