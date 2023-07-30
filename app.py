@@ -13,7 +13,7 @@ from cdk.stacks import MyStaticSiteStack
 
 # Set environment variables
 environ["AWS_ACCOUNT_ID"] = enums.AWS_ACCOUNT_ID
-environ["AWS_ACCESS_KEY"] = enums.AWS_ACCESS_KEY
+environ["AWS_ACCESS_KEY_ID"] = enums.AWS_ACCESS_KEY_ID
 environ["AWS_SECRET_ACCESS_KEY"] = enums.AWS_SECRET_ACCESS_KEY
 
 
