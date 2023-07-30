@@ -15,7 +15,7 @@ jobs:
         uses: youyo/aws-cdk-github-actions@v2.1.4
         with:
           cdk_subcommand: 'bootstrap'
-          cdk_args: 'aws://117580903444/us-east-1'
+          cdk_stack: 'aws://117580903444/us-east-1'
           actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
