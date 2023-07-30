@@ -1,6 +1,5 @@
 # Builtin
 from os import getenv
-from typing import Union, Dict, Any
 
 # Third Party
 from aws_cdk import Stack, Environment

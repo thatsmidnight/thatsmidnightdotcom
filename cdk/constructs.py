@@ -1,8 +1,7 @@
 # Builtin
-from typing import List, Optional, Union, Dict
+from typing import List, Optional
 
 # Third Party
-from aws_cdk import Aws, Environment
 from constructs import Construct
 from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
 from aws_cdk.aws_certificatemanager import Certificate, CertificateValidation
