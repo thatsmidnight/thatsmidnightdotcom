@@ -28,7 +28,7 @@ jobs:
         uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
         with:
           cdk_subcommand: 'diff'
-          cdk_args: '--app "python app.py"'
+          # cdk_args: '--app "python app.py"'
           cdk_stack: 'my-static-website-stack'
           actions_comment: true
         env:
