@@ -4,7 +4,7 @@ name: Check Stack Difference
 
 on:
   pull_request:
-    branches: [ "*" ]
+    branches: [ "main" ]
 
 env:
   AWS_REGION: 'us-east-1'
