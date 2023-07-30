@@ -20,7 +20,7 @@ from cdk import constructs, enums
 class MyEnvironment(Environment):
     def __init__(self, *, account: str = None, region: str = None) -> None:
         account = getenv("CDK_DEFAULT_ACCOUNT") if not account else account
-        region = getenv("CDK_DEFAULT_REGION") if not region else region
+        region = getenv("AWS_DEFAULT_REGION") if not region else region
         super(MyEnvironment, self).__init__(account=account, region=region)
 
 
