@@ -11,11 +11,14 @@ class BaseEnum(Enum):
             result.append(item.value)
         return result
 
+
 class MyDomainName(Enum):
     domain_name = "thatsmidnight.com"
 
+
 class CDKStackRegion(Enum):
     region = "us-east-1"
+
 
 class S3ResourcePolicyActions(BaseEnum):
     get_object = "s3:GetObject"

@@ -35,7 +35,7 @@ class MyBucket(Bucket):
         public_read_access: bool = False,
         block_public_access=BlockPublicAccess.BLOCK_ALL,
     ) -> None:
-        super.__init__(
+        super(MyBucket, self).__init__(
             scope,
             id,
             bucket_name=bucket_name,
@@ -67,7 +67,7 @@ class MyCertificate(Certificate):
         domain_name: str,
         validation=CertificateValidation.from_dns(),
     ) -> None:
-        super.__init__(
+        super(MyCertificate, self).__init__(
             scope,
             id,
             domain_name=domain_name,
@@ -82,10 +82,15 @@ class MyCloudFrontOAI(OriginAccessIdentity):
         id: str,
         comment: str,
     ) -> None:
-        super().__init__(scope, id, comment=comment)
+        super(MyCloudFrontOAI, self).__init__(scope, id, comment=comment)
 
 
-class MyViewerCertificate(ViewerCertificate):
+class MyViewerCertificate(Construct):
+    @property
+    def cert(self) -> ViewerCertificate:
+        if hasattr(self, "_cert"):
+            return self._cert
+
     def __init__(
         self,
         certificate: Certificate,
@@ -93,7 +98,7 @@ class MyViewerCertificate(ViewerCertificate):
         security_policy: str = SecurityPolicyProtocol.TLS_V1_1_2016,
         ssl_method: str = SSLMethod.SNI,
     ) -> None:
-        self = ViewerCertificate.from_acm_certificate(
+        self._cert = ViewerCertificate.from_acm_certificate(
             certificate=certificate,
             aliases=aliases,
             security_policy=security_policy,
@@ -128,7 +133,7 @@ class MyDistribution(CloudFrontWebDistribution):
                 behaviors=behaviors,
             )
         ]
-        super().__init__(
+        super(MyDistribution, self).__init__(
             scope,
             id,
             origin_configs=origin_configs,
@@ -146,7 +151,7 @@ class MyBucketDeployment(BucketDeployment):
         distribution: CloudFrontWebDistribution,
         distribution_paths: List[str],
     ) -> None:
-        super().__init__(
+        super(MyBucketDeployment, self).__init__(
             scope,
             id,
             sources=sources,
