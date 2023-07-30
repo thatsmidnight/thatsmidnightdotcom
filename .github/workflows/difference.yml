@@ -6,33 +6,33 @@ on:
   pull_request:
     branches: [ "*" ]
 
-jobs:
-  aws_cdk:
-    runs-on: ubuntu-latest
-    steps:
-      - name: cdk bootstrap
-        id: bootstrap
-        uses: youyo/aws-cdk-github-actions@v2.1.4
-        with:
-          cdk_subcommand: 'bootstrap'
-          cdk_stack: 'aws://117580903444/us-east-1'
-          actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+env:
+  AWS_REGION: 'us-east-1'
 
-      - name: cdk diff
-        id: diff
-        uses: youyo/aws-cdk-github-actions@v2.1.4
-        with:
-          cdk_subcommand: 'diff'
-          cdk_args: '--app "python app.py"'
-          cdk_stack: 'my-static-website-stack'
-          actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+permissions:
+  contents: read
+
+jobs:
+  difference:
+    name: Difference
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        mask-aws-account-id: true
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Bootstrap
+      run: |
+        cdk bootstrap
+
+    - name: Diff
+      run: |
+        cdk diff
