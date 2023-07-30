@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Builtin
 from os import environ
 
