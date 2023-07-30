@@ -1,8 +1,21 @@
 # Builtin
 from enum import Enum
+from os import getenv
 from typing import List
 
+# Third Party
+from dotenv import load_dotenv
 
+load_dotenv()
+
+
+# Static
+CDK_DEFAULT_ACCOUNT = getenv("CDK_DEFAULT_ACCOUNT")
+AWS_ACCESS_KEY = getenv("AWS_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
+
+
+# Enums
 class BaseEnum(Enum):
     @classmethod
     def values(cls) -> List[str]:

@@ -1,9 +1,9 @@
 # Builtin
-from os import getenv, getcwd
+from os import getenv
 
 # Third Party
-from aws_cdk import Stack, Environment
 from constructs import Construct
+from aws_cdk import Stack, Environment
 from aws_cdk.aws_cloudfront import (
     CloudFrontAllowedMethods,
     ViewerCertificate,
@@ -14,8 +14,7 @@ from aws_cdk.aws_iam import CanonicalUserPrincipal
 from aws_cdk.aws_s3_deployment import Source
 
 # Library
-from cdk import constructs
-from cdk.enums import MyDomainName, CDKStackRegion, S3ResourcePolicyActions
+from cdk import constructs, enums
 
 
 class MyEnvironment(Environment):
@@ -26,8 +25,8 @@ class MyEnvironment(Environment):
 
 
 class MyStaticSiteStack(Stack):
-    DOMAIN_NAME = MyDomainName.domain_name.value
-    MY_ENV = MyEnvironment(region=CDKStackRegion.region.value)
+    DOMAIN_NAME = enums.MyDomainName.domain_name.value
+    MY_ENV = MyEnvironment(region=enums.CDKStackRegion.region.value)
 
     def __init__(
         self,
@@ -61,7 +60,7 @@ class MyStaticSiteStack(Stack):
 
         # Add Cloudfront resource policy to bucket
         my_bucket.add_cloudfront_oai_to_policy(
-            actions=S3ResourcePolicyActions.values(),
+            actions=enums.S3ResourcePolicyActions.values(),
             resources=[my_bucket.arn_for_objects("*")],
             principals=[
                 CanonicalUserPrincipal(
