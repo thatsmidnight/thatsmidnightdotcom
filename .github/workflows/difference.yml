@@ -1,4 +1,4 @@
-# If Stack has difference, notify to slack
+# Basic workflow to check the difference of the CDK stack
 
 name: Check Stack Difference
 
