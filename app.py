@@ -5,11 +5,6 @@ from os import environ, getenv
 # Third Party
 from aws_cdk import App
 
-if getenv("IS_LOCAL"):
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
 # Library
 from cdk import enums
 from cdk.stacks import MyStaticSiteStack
