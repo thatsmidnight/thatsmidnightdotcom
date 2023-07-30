@@ -15,7 +15,7 @@ jobs:
         uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
         with:
           cdk_subcommand: 'bootstrap'
-          cdk_args: $CDK_ARGS
+          cdk_args: ${CDK_ARGS}
           actions_comment: true
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
