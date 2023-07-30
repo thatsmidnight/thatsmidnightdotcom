@@ -15,14 +15,12 @@ jobs:
         uses: arnaskro/aws-cdk-v2-github-actions@v2.3.0
         with:
           cdk_subcommand: 'bootstrap'
-          cdk_args: ${CDK_ARGS}
+          cdk_args: 'aws:://117580903444/us-east-1'
           actions_comment: true
         env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
-          CDK_ARGS: 'aws:://$AWS_ACCOUNT_ID/$AWS_DEFAULT_REGION'
 
       - name: cdk diff
         id: diff
