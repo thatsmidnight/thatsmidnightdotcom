@@ -29,7 +29,7 @@ jobs:
         with:
           cdk_subcommand: 'diff'
           cdk_args: '--app "python app.py"'
-          cdk_stack: 'my-static-website-stack'
+          cdk_stack: 'MyStaticSiteStack'
           actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
