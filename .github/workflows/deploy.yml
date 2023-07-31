@@ -51,4 +51,4 @@ jobs:
 
     - name: Diff
       run: |
-        cdk deploy
+        cdk deploy --require-approval never
