@@ -46,6 +46,25 @@ class MyStaticSiteStack(Stack):
             public_read_access=True,
             access_control=BucketAccessControl.PUBLIC_READ,
         )
+        my_sub_bucket = constructs.MyBucket(
+            self,
+            "my-subdomain-bucket",
+            bucket_name=self.SUBDOMAIN_NAME,
+            website_redirect=RedirectTarget(
+                host_name=self.DOMAIN_NAME,
+                protocol=RedirectProtocol.HTTP,
+            ),
+        )
+
+        # Create public read policy
+        my_bucket_policy = constructs.MyPolicyStatement(
+            sid="PublicReadGetObject",
+            effect=Effect.ALLOW,
+            principals=[AnyPrincipal()],
+            actions=[enums.S3ResourcePolicyActions.get_object.value],
+            resources=[f"arn:aws:s3:::{my_bucket.bucket_name}/*"],
+        )
+        my_bucket.add_to_resource_policy(my_bucket_policy)
 
         # Create domain certificate
         cert = constructs.MyCertificate(
