@@ -7,6 +7,11 @@ from aws_cdk import Stack, Environment
 from aws_cdk.aws_cloudfront import CloudFrontAllowedMethods
 from aws_cdk.aws_s3_deployment import Source
 from aws_cdk.aws_iam import Effect, AnyPrincipal
+from aws_cdk.aws_s3 import (
+    RedirectTarget,
+    RedirectProtocol,
+    BucketAccessControl,
+)
 
 # Library
 from cdk import constructs, enums
