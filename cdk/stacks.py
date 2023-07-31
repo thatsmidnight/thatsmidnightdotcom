@@ -40,11 +40,14 @@ class MyStaticSiteStack(Stack):
             scope, id, env=self.MY_ENV, stack_name=stack_name, **kwargs
         )
 
-        # Create S3 bucket
+        # Create S3 buckets
         my_bucket = constructs.MyBucket(
             self,
             "my-domain-bucket",
             bucket_name=self.DOMAIN_NAME,
+            website_index_document="index.html",
+            website_error_document="index.html",
+            public_read_access=True,
         )
 
         # Create domain certificate
