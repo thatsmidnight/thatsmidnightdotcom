@@ -27,6 +27,13 @@ from aws_cdk.aws_iam import (
     PolicyStatement,
 )
 from aws_cdk.aws_s3_deployment import BucketDeployment, Source
+from aws_cdk.aws_route53 import (
+    HostedZone,
+    IHostedZone,
+    ARecord,
+    AaaaRecord,
+    RecordTarget,
+)
 
 
 class MyBucket(Bucket):
@@ -194,3 +201,39 @@ class MyPolicyStatement(PolicyStatement):
             resources=resources,
             **kwargs,
         )
+
+
+class MyHostedZone:
+    @property
+    def zone(self) -> IHostedZone:
+        if hasattr(self, "_zone"):
+            return self._zone
+
+    def __init__(self, scope: Construct, id: str, hosted_zone_id: str) -> None:
+        self._zone = HostedZone.from_hosted_zone_id(
+            scope, id, hosted_zone_id=hosted_zone_id
+        )
+
+
+class MyARecord(ARecord):
+    def __init__(
+        self,
+        scope: Construct,
+        id: str,
+        zone: IHostedZone,
+        target: RecordTarget,
+        **kwargs,
+    ) -> None:
+        super().__init__(scope, id, zone=zone, target=target, **kwargs)
+
+
+class MyAAAARecord(AaaaRecord):
+    def __init__(
+        self,
+        scope: Construct,
+        id: str,
+        zone: IHostedZone,
+        target: RecordTarget,
+        **kwargs,
+    ) -> None:
+        super().__init__(scope, id, zone=zone, target=target, **kwargs)
