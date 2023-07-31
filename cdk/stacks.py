@@ -63,11 +63,7 @@ class MyStaticSiteStack(Stack):
         my_bucket.add_cloudfront_oai_to_policy(
             actions=enums.S3ResourcePolicyActions.values(),
             resources=[my_bucket.arn_for_objects("*")],
-            principals=[
-                CanonicalUserPrincipal(
-                    cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
-                )
-            ],
+            principals=[cloudfront_oai.grant_principal],
         )
 
         # Create viewer certificate
