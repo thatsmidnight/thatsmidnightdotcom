@@ -26,6 +26,7 @@ class MyEnvironment(Environment):
 
 class MyStaticSiteStack(Stack):
     DOMAIN_NAME = enums.MyDomainName.domain_name.value
+    SUBDOMAIN_NAME = enums.MyDomainName.subdomain_name.value
     MY_ENV = MyEnvironment(region=enums.CDKStackRegion.region.value)
 
     def __init__(
@@ -52,6 +53,7 @@ class MyStaticSiteStack(Stack):
             self,
             "my-domain-certificate",
             domain_name=self.DOMAIN_NAME,
+            subject_alternative_names=[self.SUBDOMAIN_NAME],
         )
 
         # Create Cloudfront user

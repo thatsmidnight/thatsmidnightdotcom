@@ -76,11 +76,13 @@ class MyCertificate(Certificate):
         id: str,
         domain_name: str,
         validation=CertificateValidation.from_dns(),
+        subject_alternative_names: Optional[List[str]]=None,
     ) -> None:
         super().__init__(
             scope,
             id,
             domain_name=domain_name,
+            subject_alternative_names=subject_alternative_names,
             validation=validation,
         )
 
