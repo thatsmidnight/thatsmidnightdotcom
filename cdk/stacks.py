@@ -42,8 +42,9 @@ class MyStaticSiteStack(Stack):
             "my-domain-bucket",
             bucket_name=self.DOMAIN_NAME,
             website_index_document="index.html",
-            website_error_document="index.html",
+            website_error_document="404.html",
             public_read_access=True,
+            access_control=BucketAccessControl.PUBLIC_READ,
         )
 
         # Create domain certificate
