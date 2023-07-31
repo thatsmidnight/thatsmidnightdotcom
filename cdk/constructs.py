@@ -23,6 +23,7 @@ from aws_cdk.aws_cloudfront import (
 )
 from aws_cdk.aws_iam import CanonicalUserPrincipal, PolicyStatement
 from aws_cdk.aws_s3_deployment import BucketDeployment, Source
+from aws_cdk.aws_route53 import HostedZone
 
 
 class MyBucket(Bucket):
@@ -170,4 +171,25 @@ class MyBucketDeployment(BucketDeployment):
             destination_bucket=desination_bucket,
             distribution=distribution,
             distribution_paths=distribution_paths,
+        )
+
+
+class MyHostedZone(Construct):
+    @property
+    def zone(self) -> HostedZone:
+        if hasattr(self, "_zone"):
+            return self._zone
+
+    def __init__(
+        self,
+        scope: Construct,
+        id: str,
+        hosted_zone_id: str,
+        zone_name: str,
+    ) -> None:
+        self._zone = HostedZone.from_hosted_zone_attributes(
+            scope,
+            id,
+            hosted_zone_id=hosted_zone_id,
+            zone_name=zone_name,
         )
