@@ -100,7 +100,7 @@ class MyCloudFrontOAI(OriginAccessIdentity):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-class MyViewerCertificate(Construct):
+class MyViewerCertificate:
     @property
     def cert(self) -> ViewerCertificate:
         if hasattr(self, "_cert"):
@@ -110,7 +110,7 @@ class MyViewerCertificate(Construct):
         self,
         certificate: Certificate,
         aliases: List[str],
-        security_policy: str = SecurityPolicyProtocol.TLS_V1_1_2016,
+        security_policy: str = SecurityPolicyProtocol.TLS_V1_2_2021,
         ssl_method: str = SSLMethod.SNI,
     ) -> None:
         self._cert = ViewerCertificate.from_acm_certificate(
