@@ -1,11 +1,7 @@
-# Builtin
-from os import getenv
-
 # Third Party
 from constructs import Construct
 from aws_cdk import (
     Stack,
-    Environment,
     aws_cloudfront as cf,
     aws_s3_deployment as s3_deploy,
     aws_iam as iam,
@@ -17,17 +13,12 @@ from aws_cdk import (
 from cdk import constructs, enums
 
 
-class MyEnvironment(Environment):
-    def __init__(self, *, account: str = None, region: str = None) -> None:
-        account = getenv("AWS_ACCOUNT_ID") if not account else account
-        region = getenv("AWS_DEFAULT_REGION") if not region else region
-        super().__init__(account=account, region=region)
-
-
 class MyStaticSiteStack(Stack):
     DOMAIN_NAME = enums.MyDomainName.domain_name.value
     SUBDOMAIN_NAME = enums.MyDomainName.subdomain_name.value
-    MY_ENV = MyEnvironment(region=enums.CDKStackRegion.region.value)
+    MY_ENV = constructs.MyEnvironment(
+        region=enums.CDKStackRegion.region.value
+    )
 
     def __init__(
         self,

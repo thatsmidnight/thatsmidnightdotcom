@@ -1,9 +1,11 @@
 # Builtin
+from os import getenv
 from typing import List, Optional
 
 # Third Party
 from constructs import Construct
 from aws_cdk import (
+    Environment,
     RemovalPolicy,
     aws_s3 as s3,
     aws_certificatemanager as cm,
@@ -12,6 +14,13 @@ from aws_cdk import (
     aws_s3_deployment as s3_deploy,
     aws_route53 as route53
 )
+
+
+class MyEnvironment(Environment):
+    def __init__(self, *, account: str = None, region: str = None) -> None:
+        account = getenv("AWS_ACCOUNT_ID") if not account else account
+        region = getenv("AWS_DEFAULT_REGION") if not region else region
+        super().__init__(account=account, region=region)
 
 
 class MyBucket(s3.Bucket):
