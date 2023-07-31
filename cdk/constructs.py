@@ -170,6 +170,3 @@ class MyBucketDeployment(BucketDeployment):
             distribution=distribution,
             distribution_paths=distribution_paths,
         )
-
-
-class MyHostedZone()
