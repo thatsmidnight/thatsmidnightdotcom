@@ -12,6 +12,7 @@ from aws_cdk.aws_s3 import (
     RedirectProtocol,
     BucketAccessControl,
 )
+from aws_cdk.aws_route53 import RecordTarget
 
 # Library
 from cdk import constructs, enums
@@ -71,7 +72,30 @@ class MyStaticSiteStack(Stack):
         )
         my_bucket.add_to_resource_policy(my_bucket_policy)
 
+        # Get Route 53 hosted zone
+        zone = constructs.MyHostedZone(
+            self,
+            "my-hosted-zone",
+            hosted_zone_id=enums.HOSTED_ZONE_ID,
+            zone_name=self.DOMAIN_NAME,
+        ).zone
+
+        # Add 'A' record of S3 domain and subdomain
+        constructs.MyARecord(
+            self,
+            "my-s3-domain-arecord",
+            zone=zone,
+            target=RecordTarget.from_values(
+                my_bucket.bucket_website_domain_name
+            )
+        )
+
+        # TODO: Add 'AAAA' record of S3 domain and subdomain
+
         # Create domain certificate
+        # NOTE: You need to go to the console and MANUALLY update the hosted
+        #   zone records with the certificate. The CDK deployment will hang
+        #   until this is completed.
         cert = constructs.MyCertificate(
             self,
             "my-domain-certificate",
@@ -106,6 +130,8 @@ class MyStaticSiteStack(Stack):
             allowed_methods=CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
             viewer_certificate=viewer_cert,
         )
+
+        # TODO: Add 'CNAME' record of distribution
 
         # Create bucket deployment
         sources = [Source.asset("./src")]
