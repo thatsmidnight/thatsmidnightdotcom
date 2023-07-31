@@ -3,7 +3,13 @@ from typing import List, Optional
 
 # Third Party
 from constructs import Construct
-from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
+from aws_cdk import RemovalPolicy
+from aws_cdk.aws_s3 import (
+    Bucket,
+    BlockPublicAccess,
+    BucketEncryption,
+    BucketAccessControl,
+)
 from aws_cdk.aws_certificatemanager import Certificate, CertificateValidation
 from aws_cdk.aws_cloudfront import (
     CloudFrontWebDistribution,
@@ -43,6 +49,11 @@ class MyBucket(Bucket):
             website_error_document=website_error_document,
             public_read_access=public_read_access,
             block_public_access=block_public_access,
+            encryption=BucketEncryption.S3_MANAGED,
+            removal_policy=RemovalPolicy.DESTROY,
+            auto_delete_objects=True,
+            access_control=BucketAccessControl.PRIVATE,
+            public_read_access=False,
         )
 
     def add_cloudfront_oai_to_policy(
@@ -159,3 +170,6 @@ class MyBucketDeployment(BucketDeployment):
             distribution=distribution,
             distribution_paths=distribution_paths,
         )
+
+
+class MyHostedZone()
