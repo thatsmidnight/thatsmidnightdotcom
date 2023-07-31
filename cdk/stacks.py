@@ -71,12 +71,10 @@ class MyStaticSiteStack(Stack):
         )
 
         # Create viewer certificate
-        viewer_cert = ViewerCertificate.from_acm_certificate(
+        viewer_cert = constructs.MyViewerCertificate(
             certificate=cert,
-            aliases=[f"{self.DOMAIN_NAME}"],
-            security_policy=SecurityPolicyProtocol.TLS_V1_1_2016,
-            ssl_method=SSLMethod.SNI,
-        )
+            aliases=[f"{self.DOMAIN_NAME}", f"{self.SUBDOMAIN_NAME}"],
+        ).cert
 
         # Create CloudFront distribution
         distribution = constructs.MyDistribution(
