@@ -3,42 +3,20 @@ from typing import List, Optional
 
 # Third Party
 from constructs import Construct
-from aws_cdk import RemovalPolicy
-from aws_cdk.aws_s3 import (
-    Bucket,
-    BucketEncryption,
-    BucketAccessControl,
-)
-from aws_cdk.aws_certificatemanager import Certificate, CertificateValidation
-from aws_cdk.aws_cloudfront import (
-    CloudFrontWebDistribution,
-    OriginAccessIdentity,
-    SecurityPolicyProtocol,
-    SSLMethod,
-    ViewerCertificate,
-    SourceConfiguration,
-    Behavior,
-    S3OriginConfig,
-)
-from aws_cdk.aws_iam import (
-    CanonicalUserPrincipal,
-    Effect,
-    IPrincipal,
-    PolicyStatement,
-)
-from aws_cdk.aws_s3_deployment import BucketDeployment, Source
-from aws_cdk.aws_route53 import (
-    HostedZone,
-    IHostedZone,
-    ARecord,
-    AaaaRecord,
-    RecordTarget,
+from aws_cdk import (
+    RemovalPolicy,
+    aws_s3 as s3,
+    aws_certificatemanager as cm,
+    aws_cloudfront as cf,
+    aws_iam as iam,
+    aws_s3_deployment as s3_deploy,
+    aws_route53 as route53
 )
 
 
-class MyBucket(Bucket):
+class MyBucket(s3.Bucket):
     @property
-    def cloudfront_oai_policy(self) -> Optional[PolicyStatement]:
+    def cloudfront_oai_policy(self) -> Optional[iam.PolicyStatement]:
         if hasattr(self, "_cloudfront_oai_policy"):
             return self._cloudfront_oai_policy
 
@@ -47,14 +25,14 @@ class MyBucket(Bucket):
         scope: Construct,
         id: str,
         bucket_name: str,
-        access_control=BucketAccessControl.PRIVATE,
+        access_control=s3.BucketAccessControl.PRIVATE,
         **kwargs
     ) -> None:
         super().__init__(
             scope,
             id,
             bucket_name=bucket_name,
-            encryption=BucketEncryption.S3_MANAGED,
+            encryption=s3.BucketEncryption.S3_MANAGED,
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             access_control=access_control,
@@ -65,9 +43,9 @@ class MyBucket(Bucket):
         self,
         actions: List[str],
         resources: List[str],
-        principals: List[CanonicalUserPrincipal],
+        principals: List[iam.CanonicalUserPrincipal],
     ) -> None:
-        self._cloudfront_oai_policy = PolicyStatement(
+        self._cloudfront_oai_policy = iam.PolicyStatement(
             actions=actions,
             resources=resources,
             principals=principals,
@@ -75,13 +53,13 @@ class MyBucket(Bucket):
         self.add_to_resource_policy(permission=self.cloudfront_oai_policy)
 
 
-class MyCertificate(Certificate):
+class MyCertificate(cm.Certificate):
     def __init__(
         self,
         scope: Construct,
         id: str,
         domain_name: str,
-        validation=CertificateValidation.from_dns(),
+        validation=cm.CertificateValidation.from_dns(),
         subject_alternative_names: Optional[List[str]]=None,
     ) -> None:
         super().__init__(
@@ -94,7 +72,7 @@ class MyCertificate(Certificate):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-class MyCloudFrontOAI(OriginAccessIdentity):
+class MyCloudFrontOAI(cf.OriginAccessIdentity):
     def __init__(
         self,
         scope: Construct,
@@ -107,18 +85,18 @@ class MyCloudFrontOAI(OriginAccessIdentity):
 
 class MyViewerCertificate:
     @property
-    def cert(self) -> ViewerCertificate:
+    def cert(self) -> cf.ViewerCertificate:
         if hasattr(self, "_cert"):
             return self._cert
 
     def __init__(
         self,
-        certificate: Certificate,
+        certificate: cm.Certificate,
         aliases: List[str],
-        security_policy: str = SecurityPolicyProtocol.TLS_V1_2_2021,
-        ssl_method: str = SSLMethod.SNI,
+        security_policy: str = cf.SecurityPolicyProtocol.TLS_V1_2_2021,
+        ssl_method: str = cf.SSLMethod.SNI,
     ) -> None:
-        self._cert = ViewerCertificate.from_acm_certificate(
+        self._cert = cf.ViewerCertificate.from_acm_certificate(
             certificate=certificate,
             aliases=aliases,
             security_policy=security_policy,
@@ -126,29 +104,29 @@ class MyViewerCertificate:
         )
 
 
-class MyDistribution(CloudFrontWebDistribution):
+class MyDistribution(cf.CloudFrontWebDistribution):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        s3_bucket_source: Bucket,
-        origin_access_identity: OriginAccessIdentity,
+        s3_bucket_source: s3.Bucket,
+        origin_access_identity: cf.OriginAccessIdentity,
         allowed_methods: str,
-        viewer_certificate: ViewerCertificate,
+        viewer_certificate: cf.ViewerCertificate,
     ) -> None:
         behaviors = [
-            Behavior(
+            cf.Behavior(
                 is_default_behavior=True,
                 compress=True,
                 allowed_methods=allowed_methods,
             )
         ]
-        s3_origin_config = S3OriginConfig(
+        s3_origin_config = cf.S3OriginConfig(
             s3_bucket_source=s3_bucket_source,
             origin_access_identity=origin_access_identity,
         )
         origin_configs = [
-            SourceConfiguration(
+            cf.SourceConfiguration(
                 s3_origin_source=s3_origin_config,
                 behaviors=behaviors,
             )
@@ -162,14 +140,14 @@ class MyDistribution(CloudFrontWebDistribution):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-class MyBucketDeployment(BucketDeployment):
+class MyBucketDeployment(s3_deploy.BucketDeployment):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        sources: List[Source],
-        desination_bucket: Bucket,
-        distribution: CloudFrontWebDistribution,
+        sources: List[s3_deploy.Source],
+        desination_bucket: s3.Bucket,
+        distribution: cf.CloudFrontWebDistribution,
         distribution_paths: List[str],
     ) -> None:
         super().__init__(
@@ -182,13 +160,13 @@ class MyBucketDeployment(BucketDeployment):
         )
 
 
-class MyPolicyStatement(PolicyStatement):
+class MyPolicyStatement(iam.PolicyStatement):
     def __init__(
         self,
         *,
         sid: str,
-        effect: Optional[Effect],
-        principals: Optional[List[IPrincipal]],
+        effect: Optional[iam.Effect],
+        principals: Optional[List[iam.IPrincipal]],
         actions: Optional[List[str]],
         resources: Optional[List[str]],
         **kwargs,
@@ -205,37 +183,37 @@ class MyPolicyStatement(PolicyStatement):
 
 class MyHostedZone:
     @property
-    def zone(self) -> IHostedZone:
+    def zone(self) -> route53.IHostedZone:
         if hasattr(self, "_zone"):
             return self._zone
 
     def __init__(
         self, scope: Construct, id: str, hosted_zone_id: str, zone_name: str
     ) -> None:
-        self._zone = HostedZone.from_hosted_zone_attributes(
+        self._zone = route53.HostedZone.from_hosted_zone_attributes(
             scope, id, hosted_zone_id=hosted_zone_id, zone_name=zone_name
         )
 
 
-class MyARecord(ARecord):
+class MyARecord(route53.ARecord):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        zone: IHostedZone,
-        target: RecordTarget,
+        zone: route53.IHostedZone,
+        target: route53.RecordTarget,
         **kwargs,
     ) -> None:
         super().__init__(scope, id, zone=zone, target=target, **kwargs)
 
 
-class MyAAAARecord(AaaaRecord):
+class MyAAAARecord(route53.AaaaRecord):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        zone: IHostedZone,
-        target: RecordTarget,
+        zone: route53.IHostedZone,
+        target: route53.RecordTarget,
         **kwargs,
     ) -> None:
         super().__init__(scope, id, zone=zone, target=target, **kwargs)

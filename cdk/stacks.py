@@ -3,16 +3,15 @@ from os import getenv
 
 # Third Party
 from constructs import Construct
-from aws_cdk import Stack, Environment
-from aws_cdk.aws_cloudfront import CloudFrontAllowedMethods
-from aws_cdk.aws_s3_deployment import Source
-from aws_cdk.aws_iam import Effect, AnyPrincipal
-from aws_cdk.aws_s3 import (
-    RedirectTarget,
-    RedirectProtocol,
-    BucketAccessControl,
+from aws_cdk import (
+    Stack,
+    Environment,
+    aws_cloudfront as cf,
+    aws_s3_deployment as s3_deploy,
+    aws_iam as iam,
+    aws_s3 as s3,
+    aws_route53 as route53
 )
-from aws_cdk.aws_route53 import RecordTarget
 
 # Library
 from cdk import constructs, enums
@@ -50,23 +49,23 @@ class MyStaticSiteStack(Stack):
             website_index_document="index.html",
             website_error_document="404.html",
             public_read_access=True,
-            access_control=BucketAccessControl.PUBLIC_READ,
+            access_control=s3.BucketAccessControl.PUBLIC_READ,
         )
         my_sub_bucket = constructs.MyBucket(
             self,
             "my-subdomain-bucket",
             bucket_name=self.SUBDOMAIN_NAME,
-            website_redirect=RedirectTarget(
+            website_redirect=s3.RedirectTarget(
                 host_name=self.DOMAIN_NAME,
-                protocol=RedirectProtocol.HTTP,
+                protocol=s3.RedirectProtocol.HTTP,
             ),
         )
 
         # Create public read policy
         my_bucket_policy = constructs.MyPolicyStatement(
             sid="PublicReadGetObject",
-            effect=Effect.ALLOW,
-            principals=[AnyPrincipal()],
+            effect=iam.Effect.ALLOW,
+            principals=[iam.AnyPrincipal()],
             actions=[enums.S3ResourcePolicyActions.get_object.value],
             resources=[f"arn:aws:s3:::{my_bucket.bucket_name}/*"],
         )
@@ -85,7 +84,7 @@ class MyStaticSiteStack(Stack):
             self,
             "my-s3-domain-arecord",
             zone=zone,
-            target=RecordTarget.from_values(
+            target=route53.RecordTarget.from_values(
                 my_bucket.bucket_website_domain_name
             ),
         )
@@ -95,7 +94,7 @@ class MyStaticSiteStack(Stack):
             self,
             "my-s3-domain-aaaarecord",
             zone=zone,
-            target=RecordTarget.from_values(
+            target=route53.RecordTarget.from_values(
                 my_bucket.bucket_dual_stack_domain_name
             ),
         )
@@ -135,14 +134,14 @@ class MyStaticSiteStack(Stack):
             "my-cloudfront-distribution",
             s3_bucket_source=my_bucket,
             origin_access_identity=cloudfront_oai,
-            allowed_methods=CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+            allowed_methods=cf.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
             viewer_certificate=viewer_cert,
         )
 
         # TODO: Add 'CNAME' record of distribution
 
         # Create bucket deployment
-        sources = [Source.asset("./src")]
+        sources = [s3_deploy.Source.asset("./src")]
         constructs.MyBucketDeployment(
             self,
             "my-bucket-deployment",
