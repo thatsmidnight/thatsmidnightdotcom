@@ -53,7 +53,6 @@ class MyBucket(Bucket):
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             access_control=BucketAccessControl.PRIVATE,
-            public_read_access=False,
         )
 
     def add_cloudfront_oai_to_policy(
