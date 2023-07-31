@@ -209,9 +209,11 @@ class MyHostedZone:
         if hasattr(self, "_zone"):
             return self._zone
 
-    def __init__(self, scope: Construct, id: str, hosted_zone_id: str) -> None:
-        self._zone = HostedZone.from_hosted_zone_id(
-            scope, id, hosted_zone_id=hosted_zone_id
+    def __init__(
+        self, scope: Construct, id: str, hosted_zone_id: str, zone_name: str
+    ) -> None:
+        self._zone = HostedZone.from_hosted_zone_attributes(
+            scope, id, hosted_zone_id=hosted_zone_id, zone_name=zone_name
         )
 
 
