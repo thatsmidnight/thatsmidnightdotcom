@@ -5,6 +5,14 @@ from os import environ
 # Third Party
 from aws_cdk import App
 
+# Try to load a .env file (local only)
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError as e:
+    print("Error -> ", e)
+
 # Library
 from cdk import enums
 from cdk.stacks import MyStaticSiteStack
