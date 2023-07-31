@@ -174,22 +174,22 @@ class MyBucketDeployment(BucketDeployment):
         )
 
 
-class MyHostedZone(Construct):
-    @property
-    def zone(self) -> HostedZone:
-        if hasattr(self, "_zone"):
-            return self._zone
-
+class MyPolicyStatement(PolicyStatement):
     def __init__(
         self,
-        scope: Construct,
-        id: str,
-        hosted_zone_id: str,
-        zone_name: str,
+        *,
+        sid: str,
+        effect: Optional[Effect],
+        principals: Optional[List[IPrincipal]],
+        actions: Optional[List[str]],
+        resources: Optional[List[str]],
+        **kwargs,
     ) -> None:
-        self._zone = HostedZone.from_hosted_zone_attributes(
-            scope,
-            id,
-            hosted_zone_id=hosted_zone_id,
-            zone_name=zone_name,
+        super().__init__(
+            sid=sid,
+            effect=effect,
+            principals=principals,
+            actions=actions,
+            resources=resources,
+            **kwargs,
         )
