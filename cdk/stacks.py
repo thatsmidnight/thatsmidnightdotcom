@@ -4,13 +4,9 @@ from os import getenv
 # Third Party
 from constructs import Construct
 from aws_cdk import Stack, Environment
-from aws_cdk.aws_cloudfront import (
-    CloudFrontAllowedMethods,
-    ViewerCertificate,
-    SecurityPolicyProtocol,
-    SSLMethod,
-)
+from aws_cdk.aws_cloudfront import CloudFrontAllowedMethods
 from aws_cdk.aws_s3_deployment import Source
+from aws_cdk.aws_iam import Effect, AnyPrincipal
 
 # Library
 from cdk import constructs, enums

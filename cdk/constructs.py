@@ -6,7 +6,6 @@ from constructs import Construct
 from aws_cdk import RemovalPolicy
 from aws_cdk.aws_s3 import (
     Bucket,
-    BlockPublicAccess,
     BucketEncryption,
     BucketAccessControl,
 )
@@ -21,9 +20,13 @@ from aws_cdk.aws_cloudfront import (
     Behavior,
     S3OriginConfig,
 )
-from aws_cdk.aws_iam import CanonicalUserPrincipal, PolicyStatement
+from aws_cdk.aws_iam import (
+    CanonicalUserPrincipal,
+    Effect,
+    IPrincipal,
+    PolicyStatement,
+)
 from aws_cdk.aws_s3_deployment import BucketDeployment, Source
-from aws_cdk.aws_route53 import HostedZone
 
 
 class MyBucket(Bucket):
