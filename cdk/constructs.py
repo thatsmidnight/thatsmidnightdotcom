@@ -86,6 +86,7 @@ class MyCertificate(Certificate):
             subject_alternative_names=subject_alternative_names,
             validation=validation,
         )
+        self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
 class MyCloudFrontOAI(OriginAccessIdentity):
@@ -96,6 +97,7 @@ class MyCloudFrontOAI(OriginAccessIdentity):
         comment: str,
     ) -> None:
         super().__init__(scope, id, comment=comment)
+        self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
 class MyViewerCertificate(Construct):
@@ -152,6 +154,7 @@ class MyDistribution(CloudFrontWebDistribution):
             origin_configs=origin_configs,
             viewer_certificate=viewer_certificate,
         )
+        self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
 class MyBucketDeployment(BucketDeployment):
