@@ -87,10 +87,18 @@ class MyStaticSiteStack(Stack):
             zone=zone,
             target=RecordTarget.from_values(
                 my_bucket.bucket_website_domain_name
-            )
+            ),
         )
 
-        # TODO: Add 'AAAA' record of S3 domain and subdomain
+        # Add 'AAAA' record of S3 domain and subdomain
+        constructs.MyAAAARecord(
+            self,
+            "my-s3-domain-aaaarecord",
+            zone=zone,
+            target=RecordTarget.from_values(
+                my_bucket.bucket_dual_stack_domain_name
+            ),
+        )
 
         # Create domain certificate
         # NOTE: You need to go to the console and MANUALLY update the hosted
