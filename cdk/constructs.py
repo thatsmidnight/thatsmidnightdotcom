@@ -35,7 +35,7 @@ class MyBucket(Bucket):
         public_read_access: bool = False,
         block_public_access=BlockPublicAccess.BLOCK_ALL,
     ) -> None:
-        super(MyBucket, self).__init__(
+        super().__init__(
             scope,
             id,
             bucket_name=bucket_name,
@@ -67,7 +67,7 @@ class MyCertificate(Certificate):
         domain_name: str,
         validation=CertificateValidation.from_dns(),
     ) -> None:
-        super(MyCertificate, self).__init__(
+        super().__init__(
             scope,
             id,
             domain_name=domain_name,
@@ -82,7 +82,7 @@ class MyCloudFrontOAI(OriginAccessIdentity):
         id: str,
         comment: str,
     ) -> None:
-        super(MyCloudFrontOAI, self).__init__(scope, id, comment=comment)
+        super().__init__(scope, id, comment=comment)
 
 
 class MyViewerCertificate(Construct):
@@ -133,7 +133,7 @@ class MyDistribution(CloudFrontWebDistribution):
                 behaviors=behaviors,
             )
         ]
-        super(MyDistribution, self).__init__(
+        super().__init__(
             scope,
             id,
             origin_configs=origin_configs,
@@ -151,7 +151,7 @@ class MyBucketDeployment(BucketDeployment):
         distribution: CloudFrontWebDistribution,
         distribution_paths: List[str],
     ) -> None:
-        super(MyBucketDeployment, self).__init__(
+        super().__init__(
             scope,
             id,
             sources=sources,

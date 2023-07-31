@@ -1,0 +1,50 @@
+# Basic workflow to check the difference of the CDK stack
+
+name: Check Stack Difference
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: 'us-east-1'
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+permissions:
+  contents: read
+
+jobs:
+  difference:
+    name: Difference
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: "16"
+
+    - name: Install Python dependencies and CDK
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        npm install -g aws-cdk
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Diff
+      run: |
+        cdk diff

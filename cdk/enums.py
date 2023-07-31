@@ -3,10 +3,10 @@ from enum import Enum
 from os import getenv
 from typing import List
 
-# Third Party
-from dotenv import load_dotenv
+if getenv("IS_LOCAL"):
+    from dotenv import load_dotenv
 
-load_dotenv()
+    load_dotenv()
 
 
 # Static
@@ -27,6 +27,7 @@ class BaseEnum(Enum):
 
 class MyDomainName(Enum):
     domain_name = "thatsmidnight.com"
+    subdomain_name = "www.thatsmidnight.com"
 
 
 class CDKStackRegion(Enum):
