@@ -3,16 +3,20 @@ from enum import Enum
 from os import getenv
 from typing import List
 
-if getenv("IS_LOCAL"):
+# Try to load a .env file (local only)
+try:
     from dotenv import load_dotenv
 
     load_dotenv()
+except ImportError as e:
+    print("Error -> ", e)
 
 
 # Static
 AWS_ACCOUNT_ID = getenv("AWS_ACCOUNT_ID")
 AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
+HOSTED_ZONE_ID = getenv("HOSTED_ZONE_ID")
 
 
 # Enums
