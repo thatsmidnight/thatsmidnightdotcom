@@ -70,7 +70,7 @@ class MyStaticSiteStack(Stack):
             zone_name=self.DOMAIN_NAME,
         ).zone
 
-        # Add 'A' record of S3 domain and subdomain
+        # Add 'A' records of S3 domain and subdomain
         constructs.MyARecord(
             self,
             "my-s3-domain-arecord",
@@ -79,14 +79,30 @@ class MyStaticSiteStack(Stack):
                 my_bucket.bucket_website_domain_name
             ),
         )
+        constructs.MyARecord(
+            self,
+            "my-s3-subdomain-arecord",
+            zone=zone,
+            target=route53.RecordTarget.from_values(
+                my_sub_bucket.bucket_website_domain_name
+            ),
+        )
 
-        # Add 'AAAA' record of S3 domain and subdomain
+        # Add 'AAAA' records of S3 domain and subdomain
         constructs.MyAAAARecord(
             self,
             "my-s3-domain-aaaarecord",
             zone=zone,
             target=route53.RecordTarget.from_values(
                 my_bucket.bucket_dual_stack_domain_name
+            ),
+        )
+        constructs.MyAAAARecord(
+            self,
+            "my-s3-subdomain-aaaarecord",
+            zone=zone,
+            target=route53.RecordTarget.from_values(
+                my_sub_bucket.bucket_dual_stack_domain_name
             ),
         )
 
