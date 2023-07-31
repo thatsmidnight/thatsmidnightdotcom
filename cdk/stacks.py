@@ -10,7 +10,6 @@ from aws_cdk.aws_cloudfront import (
     SecurityPolicyProtocol,
     SSLMethod,
 )
-from aws_cdk.aws_iam import CanonicalUserPrincipal
 from aws_cdk.aws_s3_deployment import Source
 
 # Library
