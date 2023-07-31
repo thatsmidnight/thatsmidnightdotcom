@@ -40,6 +40,7 @@ class MyBucket(Bucket):
         scope: Construct,
         id: str,
         bucket_name: str,
+        access_control=BucketAccessControl.PRIVATE,
         **kwargs
     ) -> None:
         super().__init__(
@@ -49,7 +50,7 @@ class MyBucket(Bucket):
             encryption=BucketEncryption.S3_MANAGED,
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
-            access_control=BucketAccessControl.PRIVATE,
+            access_control=access_control,
             **kwargs,
         )
 
