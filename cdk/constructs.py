@@ -37,23 +37,17 @@ class MyBucket(Bucket):
         scope: Construct,
         id: str,
         bucket_name: str,
-        website_index_document: str = "index.html",
-        website_error_document: str = "index.html",
-        public_read_access: bool = False,
-        block_public_access=BlockPublicAccess.BLOCK_ALL,
+        **kwargs
     ) -> None:
         super().__init__(
             scope,
             id,
             bucket_name=bucket_name,
-            website_index_document=website_index_document,
-            website_error_document=website_error_document,
-            public_read_access=public_read_access,
-            block_public_access=block_public_access,
             encryption=BucketEncryption.S3_MANAGED,
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             access_control=BucketAccessControl.PRIVATE,
+            **kwargs,
         )
 
     def add_cloudfront_oai_to_policy(
