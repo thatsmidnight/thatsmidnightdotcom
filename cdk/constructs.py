@@ -8,11 +8,10 @@ from aws_cdk import (
     Environment,
     RemovalPolicy,
     aws_s3 as s3,
-    aws_certificatemanager as cm,
     aws_cloudfront as cf,
-    aws_iam as iam,
+    aws_route53 as route53,
+    aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
-    aws_route53 as route53
 )
 
 
