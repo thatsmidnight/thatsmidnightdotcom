@@ -44,6 +44,7 @@ class MyStaticSiteStack(Stack):
             website_index_document="index.html",
             website_error_document="404.html",
             access_control=s3.BucketAccessControl.PUBLIC_READ,
+            block_public_access=None,
         )
         my_sub_bucket = constructs.MyBucket(
             self,
