@@ -52,7 +52,7 @@ class MyStaticSiteStack(Stack):
             bucket_name=self.SUBDOMAIN_NAME,
             website_redirect=s3.RedirectTarget(
                 host_name=self.DOMAIN_NAME,
-                protocol=s3.RedirectProtocol.HTTP,
+                protocol=s3.RedirectProtocol.HTTPS,
             ),
         )
 
