@@ -41,7 +41,6 @@ class MyStaticSiteStack(Stack):
             website_error_document="404.html",
             public_read_access=True,
             access_control=s3.BucketAccessControl.PUBLIC_READ,
-            enforce_ssl=True,
         )
         my_sub_bucket = constructs.MyBucket(
             self,
