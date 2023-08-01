@@ -24,11 +24,6 @@ class MyEnvironment(Environment):
 
 
 class MyBucket(s3.Bucket):
-    @property
-    def cloudfront_oai_policy(self) -> Optional[iam.PolicyStatement]:
-        if hasattr(self, "_cloudfront_oai_policy"):
-            return self._cloudfront_oai_policy
-
     def __init__(
         self,
         scope: Construct,
@@ -48,19 +43,6 @@ class MyBucket(s3.Bucket):
             **kwargs,
         )
 
-    def add_cloudfront_oai_to_policy(
-        self,
-        actions: List[str],
-        resources: List[str],
-        principals: List[iam.CanonicalUserPrincipal],
-    ) -> None:
-        self._cloudfront_oai_policy = iam.PolicyStatement(
-            actions=actions,
-            resources=resources,
-            principals=principals,
-        )
-        self.add_to_resource_policy(permission=self.cloudfront_oai_policy)
-
 
 class MyCertificate(cm.Certificate):
     def __init__(
@@ -68,15 +50,15 @@ class MyCertificate(cm.Certificate):
         scope: Construct,
         id: str,
         domain_name: str,
-        validation=cm.CertificateValidation.from_dns(),
+        validation: cm.CertificateValidation,
         subject_alternative_names: Optional[List[str]]=None,
     ) -> None:
         super().__init__(
             scope,
             id,
             domain_name=domain_name,
-            subject_alternative_names=subject_alternative_names,
             validation=validation,
+            subject_alternative_names=subject_alternative_names,
         )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
@@ -113,38 +95,17 @@ class MyViewerCertificate:
         )
 
 
-class MyDistribution(cf.CloudFrontWebDistribution):
+class MyDistribution(cf.Distribution):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        s3_bucket_source: s3.Bucket,
-        origin_access_identity: cf.OriginAccessIdentity,
-        allowed_methods: str,
-        viewer_certificate: cf.ViewerCertificate,
+        **kwargs,
     ) -> None:
-        behaviors = [
-            cf.Behavior(
-                is_default_behavior=True,
-                compress=True,
-                allowed_methods=allowed_methods,
-            )
-        ]
-        s3_origin_config = cf.S3OriginConfig(
-            s3_bucket_source=s3_bucket_source,
-            origin_access_identity=origin_access_identity,
-        )
-        origin_configs = [
-            cf.SourceConfiguration(
-                s3_origin_source=s3_origin_config,
-                behaviors=behaviors,
-            )
-        ]
         super().__init__(
             scope,
             id,
-            origin_configs=origin_configs,
-            viewer_certificate=viewer_certificate,
+            **kwargs,
         )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
@@ -169,27 +130,6 @@ class MyBucketDeployment(s3_deploy.BucketDeployment):
         )
 
 
-class MyPolicyStatement(iam.PolicyStatement):
-    def __init__(
-        self,
-        *,
-        sid: str,
-        effect: Optional[iam.Effect],
-        principals: Optional[List[iam.IPrincipal]],
-        actions: Optional[List[str]],
-        resources: Optional[List[str]],
-        **kwargs,
-    ) -> None:
-        super().__init__(
-            sid=sid,
-            effect=effect,
-            principals=principals,
-            actions=actions,
-            resources=resources,
-            **kwargs,
-        )
-
-
 class MyHostedZone:
     @property
     def zone(self) -> route53.IHostedZone:
@@ -211,18 +151,32 @@ class MyARecord(route53.ARecord):
         id: str,
         zone: route53.IHostedZone,
         target: route53.RecordTarget,
+        record_name: Optional[str]=None,
         **kwargs,
     ) -> None:
-        super().__init__(scope, id, zone=zone, target=target, **kwargs)
+        super().__init__(
+            scope,
+            id,
+            zone=zone,
+            target=target,
+            record_name=record_name,
+            **kwargs,
+        )
 
 
-class MyAAAARecord(route53.AaaaRecord):
+class MyResponseHeadersPolicy(cf.ResponseHeadersPolicy):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        zone: route53.IHostedZone,
-        target: route53.RecordTarget,
+        response_headers_policy_name: str,
+        security_headers_behavior: cf.ResponseSecurityHeadersBehavior,
         **kwargs,
     ) -> None:
-        super().__init__(scope, id, zone=zone, target=target, **kwargs)
+        super().__init__(
+            scope,
+            id,
+            response_headers_policy_name=response_headers_policy_name,
+            security_headers_behavior=security_headers_behavior,
+            **kwargs,
+        )
