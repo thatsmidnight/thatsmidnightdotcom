@@ -118,6 +118,7 @@ class MyBucketDeployment(s3_deploy.BucketDeployment):
         desination_bucket: s3.Bucket,
         distribution: cf.CloudFrontWebDistribution,
         distribution_paths: List[str],
+        **kwargs,
     ) -> None:
         super().__init__(
             scope,
@@ -126,6 +127,7 @@ class MyBucketDeployment(s3_deploy.BucketDeployment):
             destination_bucket=desination_bucket,
             distribution=distribution,
             distribution_paths=distribution_paths,
+            **kwargs,
         )
 
 

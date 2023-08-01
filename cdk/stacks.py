@@ -43,8 +43,7 @@ class MyStaticSiteStack(Stack):
             bucket_name=self.DOMAIN_NAME,
             website_index_document="index.html",
             website_error_document="404.html",
-            access_control=s3.BucketAccessControl.PUBLIC_READ,
-            block_public_access=None,
+            public_read_access=True,
         )
         my_sub_bucket = constructs.MyBucket(
             self,
@@ -154,12 +153,20 @@ class MyStaticSiteStack(Stack):
         )
 
         # Deploy content to bucket
-        sources = [s3_deploy.Source.asset("./src")]
         constructs.MyBucketDeployment(
             self,
             "my-bucket-deployment",
-            sources=sources,
+            sources=[s3_deploy.Source.asset("./src")],
             desination_bucket=my_bucket,
             distribution=distribution,
             distribution_paths=["/*"],
+            content_type="text/html",
+            content_language="en",
+            storage_class=s3_deploy.StorageClass.INTELLIGENT_TIERING,
+            server_side_encryption=s3_deploy.ServerSideEncryption.AES_256,
+            cache_control=[
+                s3_deploy.CacheControl.set_public(),
+                s3_deploy.CacheControl.max_age(Duration.hours(1)),
+            ],
+            access_control=s3.BucketAccessControl.PUBLIC_READ,
         )
