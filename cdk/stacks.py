@@ -3,7 +3,6 @@ from constructs import Construct
 from aws_cdk import (
     Stack,
     Duration,
-    aws_s3 as s3,
     aws_cloudfront as cf,
     aws_route53 as route53,
     aws_certificatemanager as cm,
@@ -41,17 +40,6 @@ class MyStaticSiteStack(Stack):
             self,
             "my-domain-bucket",
             bucket_name=self.DOMAIN_NAME,
-            website_index_document="index.html",
-            website_error_document="404.html",
-            public_read_access=True,
-            access_control=s3.BucketAccessControl.PUBLIC_READ,
-            object_ownership=s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
-            block_public_access=s3.BlockPublicAccess(
-                block_public_acls=False,
-                block_public_policy=False,
-                ignore_public_acls=False,
-                restrict_public_buckets=False,
-            ),
         )
 
         # Get Route 53 hosted zone
@@ -126,7 +114,10 @@ class MyStaticSiteStack(Stack):
             "my-cloudfront-distribution",
             default_behavior=cf.BehaviorOptions(
                 compress=True,
-                origin=origins.S3Origin(my_bucket),
+                origin=origins.S3Origin(
+                    bucket=my_bucket,
+                    origin_access_identity=cloudfront_oai,
+                ),
                 response_headers_policy=response_headers_policy,
                 viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             ),
@@ -162,12 +153,10 @@ class MyStaticSiteStack(Stack):
             desination_bucket=my_bucket,
             distribution=distribution,
             distribution_paths=["/*"],
-            content_language="en",
             storage_class=s3_deploy.StorageClass.INTELLIGENT_TIERING,
             server_side_encryption=s3_deploy.ServerSideEncryption.AES_256,
             cache_control=[
                 s3_deploy.CacheControl.set_public(),
                 s3_deploy.CacheControl.max_age(Duration.hours(1)),
             ],
-            access_control=s3.BucketAccessControl.PUBLIC_READ,
         )

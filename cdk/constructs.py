@@ -74,27 +74,6 @@ class MyCloudFrontOAI(cf.OriginAccessIdentity):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-# class MyViewerCertificate:
-#     @property
-#     def cert(self) -> cf.ViewerCertificate:
-#         if hasattr(self, "_cert"):
-#             return self._cert
-
-#     def __init__(
-#         self,
-#         certificate: cm.Certificate,
-#         aliases: List[str],
-#         security_policy: str = cf.SecurityPolicyProtocol.TLS_V1_2_2021,
-#         ssl_method: str = cf.SSLMethod.SNI,
-#     ) -> None:
-#         self._cert = cf.ViewerCertificate.from_acm_certificate(
-#             certificate=certificate,
-#             aliases=aliases,
-#             security_policy=security_policy,
-#             ssl_method=ssl_method,
-#         )
-
-
 class MyDistribution(cf.Distribution):
     def __init__(
         self,
