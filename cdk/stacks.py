@@ -3,6 +3,7 @@ from constructs import Construct
 from aws_cdk import (
     Stack,
     Duration,
+    aws_s3 as s3,
     aws_cloudfront as cf,
     aws_route53 as route53,
     aws_certificatemanager as cm,
@@ -82,40 +83,6 @@ class MyStaticSiteStack(Stack):
             cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
         )
 
-        # Create response headers policy
-        response_headers_policy = constructs.MyResponseHeadersPolicy(
-            self,
-            "my-response-headers-policy",
-            response_headers_policy_name="my-static-site-security-headers",
-            security_headers_behavior=cf.ResponseSecurityHeadersBehavior(
-                strict_transport_security=cf.ResponseHeadersStrictTransportSecurity(
-                    access_control_max_age=Duration.seconds(63072000),
-                    include_subdomains=True,
-                    override=True,
-                    preload=True,
-                ),
-                content_security_policy=cf.ResponseHeadersContentSecurityPolicy(
-                    content_security_policy="default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'",
-                    override=True,
-                ),
-                content_type_options=cf.ResponseHeadersContentTypeOptions(
-                    override=True
-                ),
-                frame_options=cf.ResponseHeadersFrameOptions(
-                    frame_option=cf.HeadersFrameOption.DENY, override=True
-                ),
-                referrer_policy=cf.ResponseHeadersReferrerPolicy(
-                    referrer_policy=cf.HeadersReferrerPolicy.SAME_ORIGIN,
-                    override=True,
-                ),
-                xss_protection=cf.ResponseHeadersXSSProtection(
-                    protection=True,
-                    mode_block=True,
-                    override=True,
-                ),
-            ),
-        )
-
         # Create CloudFront distribution
         distribution = constructs.MyDistribution(
             self,
@@ -126,7 +93,6 @@ class MyStaticSiteStack(Stack):
                     bucket=my_bucket,
                     origin_access_identity=cloudfront_oai,
                 ),
-                response_headers_policy=response_headers_policy,
                 viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             ),
             domain_names=[f"{self.DOMAIN_NAME}", f"{self.SUBDOMAIN_NAME}"],
