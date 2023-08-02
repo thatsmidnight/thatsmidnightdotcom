@@ -1,7 +1,7 @@
 # Builtin
 from enum import Enum
 from os import getenv
-from typing import List
+from typing import List, Optional
 
 # Try to load a .env file (local only)
 try:
@@ -22,7 +22,7 @@ HOSTED_ZONE_ID = getenv("HOSTED_ZONE_ID")
 # Enums
 class BaseEnum(Enum):
     @classmethod
-    def values(cls) -> List[str]:
+    def values(cls) -> Optional[List[str]]:
         result = []
         for item in cls:
             result.append(item.value)
@@ -39,4 +39,6 @@ class CDKStackRegion(Enum):
 
 
 class S3ResourcePolicyActions(BaseEnum):
-    get_object = "s3:GetObject"
+    get_object = "s3:GetObject*"
+    get_bucket = "s3:GetBucket*"
+    list_all = "s3:List*"

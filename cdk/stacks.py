@@ -44,14 +44,13 @@ class MyStaticSiteStack(Stack):
             website_index_document="index.html",
             website_error_document="404.html",
             public_read_access=True,
-        )
-        my_sub_bucket = constructs.MyBucket(
-            self,
-            "my-subdomain-bucket",
-            bucket_name=self.SUBDOMAIN_NAME,
-            website_redirect=s3.RedirectTarget(
-                host_name=self.DOMAIN_NAME,
-                protocol=s3.RedirectProtocol.HTTP,
+            access_control=s3.BucketAccessControl.PUBLIC_READ,
+            object_ownership=s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
+            block_public_access=s3.BlockPublicAccess(
+                block_public_acls=False,
+                block_public_policy=False,
+                ignore_public_acls=False,
+                restrict_public_buckets=False,
             ),
         )
 
@@ -76,13 +75,16 @@ class MyStaticSiteStack(Stack):
         cloudfront_oai = constructs.MyCloudFrontOAI(
             self, id, comment=f"CloudFront OAI for {self.DOMAIN_NAME}"
         )
-        my_bucket.grant_read(cloudfront_oai)
 
-        # Create viewer certificate
-        viewer_cert = constructs.MyViewerCertificate(
-            certificate=cert,
-            aliases=[f"{self.DOMAIN_NAME}", f"{self.SUBDOMAIN_NAME}"],
-        ).cert
+        # Create IAM policy statement to allow OAI access to S3 bucket
+        my_policy = constructs.MyPolicyStatement(
+            sid="Grant read and list from root domain bucket to OAI",
+            actions=enums.S3ResourcePolicyActions.values(),
+            resources=[self.DOMAIN_NAME, f"{self.DOMAIN_NAME}/*"],
+        )
+        my_policy.add_canonical_user_principal(
+            cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
+        )
 
         # Create response headers policy
         response_headers_policy = constructs.MyResponseHeadersPolicy(
@@ -160,7 +162,6 @@ class MyStaticSiteStack(Stack):
             desination_bucket=my_bucket,
             distribution=distribution,
             distribution_paths=["/*"],
-            content_type="text/html",
             content_language="en",
             storage_class=s3_deploy.StorageClass.INTELLIGENT_TIERING,
             server_side_encryption=s3_deploy.ServerSideEncryption.AES_256,
