@@ -3,7 +3,6 @@ from constructs import Construct
 from aws_cdk import (
     Stack,
     Duration,
-    aws_s3 as s3,
     aws_cloudfront as cf,
     aws_route53 as route53,
     aws_certificatemanager as cm,
@@ -41,19 +40,6 @@ class MyStaticSiteStack(Stack):
             self,
             "my-domain-bucket",
             bucket_name=self.DOMAIN_NAME,
-            website_index_document="index.html",
-            website_error_document="404.html",
-            access_control=s3.BucketAccessControl.PUBLIC_READ,
-            block_public_access=None,
-        )
-        my_sub_bucket = constructs.MyBucket(
-            self,
-            "my-subdomain-bucket",
-            bucket_name=self.SUBDOMAIN_NAME,
-            website_redirect=s3.RedirectTarget(
-                host_name=self.DOMAIN_NAME,
-                protocol=s3.RedirectProtocol.HTTPS,
-            ),
         )
 
         # Get Route 53 hosted zone
@@ -77,13 +63,16 @@ class MyStaticSiteStack(Stack):
         cloudfront_oai = constructs.MyCloudFrontOAI(
             self, id, comment=f"CloudFront OAI for {self.DOMAIN_NAME}"
         )
-        my_bucket.grant_read(cloudfront_oai)
 
-        # Create viewer certificate
-        viewer_cert = constructs.MyViewerCertificate(
-            certificate=cert,
-            aliases=[f"{self.DOMAIN_NAME}", f"{self.SUBDOMAIN_NAME}"],
-        ).cert
+        # Create IAM policy statement to allow OAI access to S3 bucket
+        my_policy = constructs.MyPolicyStatement(
+            sid="Grant read and list from root domain bucket to OAI",
+            actions=enums.S3ResourcePolicyActions.values(),
+            resources=[self.DOMAIN_NAME, f"{self.DOMAIN_NAME}/*"],
+        )
+        my_policy.add_canonical_user_principal(
+            cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
+        )
 
         # Create response headers policy
         response_headers_policy = constructs.MyResponseHeadersPolicy(
@@ -125,7 +114,10 @@ class MyStaticSiteStack(Stack):
             "my-cloudfront-distribution",
             default_behavior=cf.BehaviorOptions(
                 compress=True,
-                origin=origins.S3Origin(my_bucket),
+                origin=origins.S3Origin(
+                    bucket=my_bucket,
+                    origin_access_identity=cloudfront_oai,
+                ),
                 response_headers_policy=response_headers_policy,
                 viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             ),
@@ -154,12 +146,17 @@ class MyStaticSiteStack(Stack):
         )
 
         # Deploy content to bucket
-        sources = [s3_deploy.Source.asset("./src")]
         constructs.MyBucketDeployment(
             self,
             "my-bucket-deployment",
-            sources=sources,
+            sources=[s3_deploy.Source.asset("./src")],
             desination_bucket=my_bucket,
             distribution=distribution,
             distribution_paths=["/*"],
+            storage_class=s3_deploy.StorageClass.INTELLIGENT_TIERING,
+            server_side_encryption=s3_deploy.ServerSideEncryption.AES_256,
+            cache_control=[
+                s3_deploy.CacheControl.set_public(),
+                s3_deploy.CacheControl.max_age(Duration.hours(1)),
+            ],
         )

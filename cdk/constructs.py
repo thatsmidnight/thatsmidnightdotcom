@@ -8,6 +8,7 @@ from aws_cdk import (
     Environment,
     RemovalPolicy,
     aws_s3 as s3,
+    aws_iam as iam,
     aws_cloudfront as cf,
     aws_route53 as route53,
     aws_certificatemanager as cm,
@@ -73,27 +74,6 @@ class MyCloudFrontOAI(cf.OriginAccessIdentity):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-class MyViewerCertificate:
-    @property
-    def cert(self) -> cf.ViewerCertificate:
-        if hasattr(self, "_cert"):
-            return self._cert
-
-    def __init__(
-        self,
-        certificate: cm.Certificate,
-        aliases: List[str],
-        security_policy: str = cf.SecurityPolicyProtocol.TLS_V1_2_2021,
-        ssl_method: str = cf.SSLMethod.SNI,
-    ) -> None:
-        self._cert = cf.ViewerCertificate.from_acm_certificate(
-            certificate=certificate,
-            aliases=aliases,
-            security_policy=security_policy,
-            ssl_method=ssl_method,
-        )
-
-
 class MyDistribution(cf.Distribution):
     def __init__(
         self,
@@ -118,6 +98,7 @@ class MyBucketDeployment(s3_deploy.BucketDeployment):
         desination_bucket: s3.Bucket,
         distribution: cf.CloudFrontWebDistribution,
         distribution_paths: List[str],
+        **kwargs,
     ) -> None:
         super().__init__(
             scope,
@@ -126,6 +107,7 @@ class MyBucketDeployment(s3_deploy.BucketDeployment):
             destination_bucket=desination_bucket,
             distribution=distribution,
             distribution_paths=distribution_paths,
+            **kwargs,
         )
 
 
@@ -177,5 +159,21 @@ class MyResponseHeadersPolicy(cf.ResponseHeadersPolicy):
             id,
             response_headers_policy_name=response_headers_policy_name,
             security_headers_behavior=security_headers_behavior,
+            **kwargs,
+        )
+
+
+class MyPolicyStatement(iam.PolicyStatement):
+    def __init__(
+        self,
+        sid: str,
+        actions: List[str],
+        resources: List[str],
+        **kwargs,
+    ) -> None:
+        super().__init__(
+            sid=sid,
+            actions=actions,
+            resources=resources,
             **kwargs,
         )
