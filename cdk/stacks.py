@@ -40,6 +40,14 @@ class MyStaticSiteStack(Stack):
             self,
             "my-domain-bucket",
             bucket_name=self.DOMAIN_NAME,
+            cors=[
+                s3.CorsRule(
+                    allowed_methods=[s3.HttpMethods.GET],
+                    allowed_origins=["*"],
+                    allowed_headers=["Authorization"],
+                    max_age=3000,
+                )
+            ]
         )
 
         # Get Route 53 hosted zone
