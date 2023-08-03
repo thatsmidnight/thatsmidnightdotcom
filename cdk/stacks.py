@@ -61,7 +61,7 @@ class MyStaticSiteStack(Stack):
             domain_name=enums.MyDomainName.domain_name.value,
             validation=cm.CertificateValidation.from_dns(zone),
             subject_alternative_names=[
-                enums.MyDomainName.subdomain_name.value
+                f"*.{enums.MyDomainName.domain_name.value}",
             ],
         )
 
