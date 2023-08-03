@@ -30,7 +30,7 @@ class MyBucket(s3.Bucket):
         id: str,
         bucket_name: str,
         access_control=s3.BucketAccessControl.PRIVATE,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             scope,
@@ -51,7 +51,7 @@ class MyCertificate(cm.Certificate):
         id: str,
         domain_name: str,
         validation: cm.CertificateValidation,
-        subject_alternative_names: Optional[List[str]]=None,
+        subject_alternative_names: Optional[List[str]] = None,
     ) -> None:
         super().__init__(
             scope,
@@ -132,7 +132,7 @@ class MyARecord(route53.ARecord):
         id: str,
         zone: route53.IHostedZone,
         target: route53.RecordTarget,
-        record_name: Optional[str]=None,
+        record_name: Optional[str] = None,
         **kwargs,
     ) -> None:
         super().__init__(
