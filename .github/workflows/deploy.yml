@@ -50,6 +50,6 @@ jobs:
       run: |
         cdk synth
 
-    - name: Diff
+    - name: Deploy
       run: |
         cdk deploy --require-approval never
