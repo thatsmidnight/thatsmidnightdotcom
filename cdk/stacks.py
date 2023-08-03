@@ -16,10 +16,6 @@ from aws_cdk import (
 from cdk import constructs, enums
 
 
-# Shared environment static variable
-MY_ENV = constructs.MyEnvironment(region=enums.CDKStackRegion.region.value)
-
-
 class MyStaticSiteStack(Stack):
     def __init__(
         self,
@@ -29,8 +25,10 @@ class MyStaticSiteStack(Stack):
         stack_name: str,
         **kwargs,
     ) -> None:
+        env = constructs.MyEnvironment(region=enums.CDKStackRegion.region.value)
+
         super().__init__(
-            scope, id, env=MY_ENV, stack_name=stack_name, **kwargs
+            scope, id, env=env, stack_name=stack_name, **kwargs
         )
 
         # Create S3 buckets
