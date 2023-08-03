@@ -25,11 +25,11 @@ class MyStaticSiteStack(Stack):
         stack_name: str,
         **kwargs,
     ) -> None:
-        env = constructs.MyEnvironment(region=enums.CDKStackRegion.region.value)
-
-        super().__init__(
-            scope, id, env=env, stack_name=stack_name, **kwargs
+        env = constructs.MyEnvironment(
+            region=enums.CDKStackRegion.region.value
         )
+
+        super().__init__(scope, id, env=env, stack_name=stack_name, **kwargs)
 
         # Create S3 buckets
         my_bucket = constructs.MyBucket(
@@ -43,7 +43,7 @@ class MyStaticSiteStack(Stack):
                     allowed_headers=["Authorization"],
                     max_age=3000,
                 )
-            ]
+            ],
         )
 
         # Get Route 53 hosted zone
@@ -60,19 +60,26 @@ class MyStaticSiteStack(Stack):
             "my-domain-certificate",
             domain_name=enums.MyDomainName.domain_name.value,
             validation=cm.CertificateValidation.from_dns(zone),
-            subject_alternative_names=[enums.MyDomainName.subdomain_name.value],
+            subject_alternative_names=[
+                enums.MyDomainName.subdomain_name.value
+            ],
         )
 
         # Create Cloudfront user and grant read on root domain bucket
         cloudfront_oai = constructs.MyCloudFrontOAI(
-            self, id, comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}"
+            self,
+            id,
+            comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
         )
 
         # Create IAM policy statement to allow OAI access to S3 bucket
         my_policy = constructs.MyPolicyStatement(
             sid="Grant read and list from root domain bucket to OAI",
             actions=enums.S3ResourcePolicyActions.values(),
-            resources=[enums.MyDomainName.domain_name.value, f"{enums.MyDomainName.domain_name.value}/*"],
+            resources=[
+                enums.MyDomainName.domain_name.value,
+                f"{enums.MyDomainName.domain_name.value}/*",
+            ],
         )
         my_policy.add_canonical_user_principal(
             cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
@@ -90,7 +97,10 @@ class MyStaticSiteStack(Stack):
                 ),
                 viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             ),
-            domain_names=[f"{enums.MyDomainName.domain_name.value}", f"{enums.MyDomainName.subdomain_name.value}"],
+            domain_names=[
+                f"{enums.MyDomainName.domain_name.value}",
+                f"{enums.MyDomainName.subdomain_name.value}",
+            ],
             default_root_object="index.html",
             certificate=cert,
         )
