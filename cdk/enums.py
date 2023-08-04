@@ -2,6 +2,7 @@
 from enum import Enum
 from os import getenv
 from typing import List, Optional
+from dataclasses import dataclass
 
 # Try to load a .env file (local only)
 try:
@@ -42,3 +43,24 @@ class S3ResourcePolicyActions(BaseEnum):
     get_object = "s3:GetObject*"
     get_bucket = "s3:GetBucket*"
     list_all = "s3:List*"
+
+
+class OriginAccessControlOriginType(Enum):
+    mediastore = "mediastore"
+    s3 = "s3"
+
+
+class OriginAccessControlSigningBehavior(Enum):
+    always = "always"
+    never = "never"
+    no_override = "no_override"
+
+
+# Data classes
+@dataclass
+class OACConfigPropertyDataClass:
+    name: str
+    origin_access_control_origin_type: OriginAccessControlOriginType = "s3"
+    signing_behavior: OriginAccessControlSigningBehavior = "always"
+    signing_protocol: str = "sigv4"
+    description: Optional[str] = None
