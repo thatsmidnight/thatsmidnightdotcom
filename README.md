@@ -31,6 +31,10 @@ The nice thing is, with the current configuration, we can keep the bucket *priva
 
 However, if you want to bypass the CloudFront and Certificate stuff (if you don't care too much about security), then you could just make your S3 bucket a static website by setting the `website_index_document` property of your `aws_cdk.aws_s3.Bucket` resource. Going down this route would mean that you *need* your bucket to be named the same as your domain name. Check the documentation [here](https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_s3/Bucket.html) to learn more!
 
+#### CORS
+
+**[Cross-origin resource sharing](https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html)** is the way that your S3 resources will be able to interact with other resources hosted outside your domain. This enables things like web application embeds to work on your website. For example, you could have a track from SoundCloud embedded on your site.
+
 ### CloudFront distribution
 
 A CloudFront distribution serves a dual purpose in this stack:
