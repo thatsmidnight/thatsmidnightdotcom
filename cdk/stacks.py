@@ -68,8 +68,18 @@ class MyStaticSiteStack(Stack):
         # Create Cloudfront user and grant read on root domain bucket
         cloudfront_oai = constructs.MyCloudFrontOAI(
             self,
-            id,
+            id,  # TODO: This needs to change...
             comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
+        )
+
+        # Create CloudFront origin access control to access domain bucket
+        constructs.MyCloudFrontOAC(
+            self,
+            "my-cloudfront-oac",
+            **{
+                "name": "my-oac-control-config",
+                "description": f"CloudFront OAC for {enums.MyDomainName.domain_name.value}",
+            },
         )
 
         # Create IAM policy statement to allow OAI access to S3 bucket
@@ -104,6 +114,7 @@ class MyStaticSiteStack(Stack):
             default_root_object="index.html",
             certificate=cert,
         )
+        my_policy.add_canonical_user_principal(distribution.distribution_id)
 
         # Create CloudFront distribution A records
         constructs.MyARecord(
