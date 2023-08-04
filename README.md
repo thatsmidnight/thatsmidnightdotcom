@@ -39,7 +39,7 @@ A CloudFront distribution serves a dual purpose in this stack:
     - There are more advantages to using a CloudFront distribution, but please read up on the [documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html) for yourself!
 2. Provide authenticated access (HTTPS) to users via the [OAI](#cloudfront-origin-access-identity-legacy) using a signed [certificate](#certificate).
 
-I'm not going to talk about the first point here since, to me, it's not as interesting as the second point. And I don't like writing documentation.
+I'm not going to talk about the first point here since, to me, it's not as interesting as the second point.
 
 The cool stuff is what *you* can use it for in terms of access and security. But, these things aren't achieved by the distribution alone. To get the website behind HTTPS and access your private content on S3, you need a [certificate](#certificate) and an [OAI](#cloudfront-origin-access-identity-legacy).
 
