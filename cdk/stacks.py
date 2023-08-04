@@ -68,7 +68,7 @@ class MyStaticSiteStack(Stack):
         # Create Cloudfront user and grant read on root domain bucket
         cloudfront_oai = constructs.MyCloudFrontOAI(
             self,
-            id,  # TODO: This needs to change...
+            "my-cloudfront-oai",
             comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
         )
 
