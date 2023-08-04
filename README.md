@@ -4,7 +4,9 @@ Repository for ThatsMidnight's personal static website hosted on S3.
 
 ## Summary
 
-This project deploys various AWS infrastructure resources to host a static website on S3 accessed via CloudFront. The CloudFront distribution provides HTTPS access to a private S3 bucket hosting a static website. Thanks to CORS (cross-origin resource sharing), we can include things like a SoundCloud embed without it being blocked by CloudFront, S3, etc. Assuming our domain name is hosted on Route 53, the certificate can validate via DNS which allows for a much more streamlined deployment process.
+This project deploys various AWS infrastructure resources to host a static website on S3 accessed via CloudFront. This project assumes that your domain is hosted on Route 53.
+
+The CloudFront distribution provides HTTPS access to a private S3 bucket hosting a static website. Thanks to CORS (cross-origin resource sharing), we can include things like a SoundCloud embed without it being blocked by CloudFront, S3, etc. Assuming our domain name is hosted on Route 53, the certificate can validate via DNS which allows for a much more streamlined deployment process.
 
 We will go into greater detail below about how all the resources work together.
 
