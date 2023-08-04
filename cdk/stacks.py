@@ -72,14 +72,17 @@ class MyStaticSiteStack(Stack):
             comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
         )
 
-        # Create CloudFront origin access control to access domain bucket
-        constructs.MyCloudFrontOAC(
-            self,
-            "my-cloudfront-oac",
-            **{
-                "name": "my-oac-control-config",
-                "description": f"CloudFront OAC for {enums.MyDomainName.domain_name.value}",
-            },
+        # Create IAM policy statement to allow OAI access to S3 bucket
+        my_policy = constructs.MyPolicyStatement(
+            sid="Grant read and list from root domain bucket to OAI",
+            actions=enums.S3ResourcePolicyActions.values(),
+            resources=[
+                enums.MyDomainName.domain_name.value,
+                f"{enums.MyDomainName.domain_name.value}/*",
+            ],
+        )
+        my_policy.add_canonical_user_principal(
+            cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
         )
 
         # Create CloudFront distribution
@@ -101,38 +104,6 @@ class MyStaticSiteStack(Stack):
             default_root_object="index.html",
             certificate=cert,
         )
-
-        # Create IAM policy statement to allow OAI and OAC access to S3 bucket
-        my_oai_policy = constructs.MyPolicyStatement(
-            sid="Grant read and list from root domain bucket to OAI",
-            actions=enums.S3ResourcePolicyActions.values(),
-            resources=[
-                enums.MyDomainName.domain_name.value,
-                f"{enums.MyDomainName.domain_name.value}/*",
-            ],
-        )
-        # my_oac_policy = constructs.MyPolicyStatement(
-        #     sid="Grant read and list from root domain bucket to OAI",
-        #     actions=enums.S3ResourcePolicyActions.values(),
-        #     resources=[
-        #         enums.MyDomainName.domain_name.value,
-        #         f"{enums.MyDomainName.domain_name.value}/*",
-        #     ],
-        # )
-        my_oai_policy.add_canonical_user_principal(
-            cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
-        )
-        # my_oac_policy.add_condition(
-        #     "StringEquals",
-        #     {
-        #         "AWS:SourceArn": f"arn:aws:cloudfront::{enums.AWS_ACCOUNT_ID}:distribution/{distribution.distribution_id}"
-        #     }
-        # )
-        # my_oac_policy.add_service_principal(
-        #     service="cloudfront.amazonaws.com"
-        # )
-        my_bucket.add_to_resource_policy(my_oai_policy)
-        # my_bucket.add_to_resource_policy(my_oac_policy)
 
         # Create CloudFront distribution A records
         constructs.MyARecord(
