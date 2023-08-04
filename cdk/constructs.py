@@ -1,5 +1,6 @@
 # Builtin
 from os import getenv
+from dataclasses import asdict
 from typing import List, Optional
 
 # Third Party
@@ -14,6 +15,9 @@ from aws_cdk import (
     aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
 )
+
+# Library
+from cdk import enums
 
 
 class MyEnvironment(Environment):
@@ -71,6 +75,33 @@ class MyCloudFrontOAI(cf.OriginAccessIdentity):
         comment: str,
     ) -> None:
         super().__init__(scope, id, comment=comment)
+        self.apply_removal_policy(RemovalPolicy.DESTROY)
+
+
+class MyOACConfigProperty(cf.CfnOriginAccessControl.OriginAccessControlConfigProperty):
+    def __init__(
+        self,
+        oac_config_property_data_class=enums.OACConfigPropertyDataClass,
+    ) -> None:
+        super().__init__(**asdict(oac_config_property_data_class))
+
+
+class MyCloudFrontOAC(cf.CfnOriginAccessControl):
+    def __init__(
+        self,
+        scope: Construct,
+        id: str,
+        **oac_config_property_data_class: enums.OACConfigPropertyDataClass,
+    ) -> None:
+        super().__init__(
+            scope,
+            id,
+            origin_access_control_config=MyOACConfigProperty(
+                enums.OACConfigPropertyDataClass(
+                    **oac_config_property_data_class
+                )
+            ),
+        )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
