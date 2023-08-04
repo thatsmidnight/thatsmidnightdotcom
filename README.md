@@ -49,8 +49,26 @@ The cool stuff is what *you* can use it for in terms of access and security. But
 
 ### Certificate
 
-To secure the content behind HTTPS the distribution needs a certificate either provided by CloudFront for the distribution's domain or for your custom domain name(s).
+To secure the content behind HTTPS the distribution needs a certificate either provided by CloudFront for the distribution's domain or for your custom domain name(s). This certificate ensures that any requests to access your private S3 are encrypted and secure.
 
 ### CloudFront Origin Access Identity (legacy)
 
-When you create a distribution, you have to tell it what the **origin** is. In this case, the origin is our S3 bucket because that's where all the files will be. But, when you define your origin, you can also specify an origin access identity that the distribution can use to view the bucket's content while maintaining a *private* and *encrypted* bucket that is ***not*** directly accessible to the public.
+When you create a distribution, you have to tell it what the **origin** is. In this case, the origin is our S3 bucket because that's where all the files will be. But, when you define your origin, you can also specify an **origin access identity** that the distribution uses to view the bucket's content. You can think of it like a role that users can assume in order to access your website from the [distributed network of data centers](https://wa.aws.amazon.com/wellarchitected/2020-07-02T19-33-23/wat.concept.edge-location.en.html).
+
+When you put all these resources together, you can rest easy knowing that any user accessing your content will be able to do it quickly, safely, and securely.
+
+... Except for the fact that we're using [OAI and not OAC](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html).
+
+## OAI vs OAC
+
+While our users are still being authenticated, **origin access identity** (OAI) is legacy and **origin access control** (OAC) is recommended. The specific reasons why are covered [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html). None of this should matter to you, however, if your origin is an S3 bucket that's configured *as a [website endpoint](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html)*, this doesn't apply to you.
+
+Since this is on the roadmap, I'll summarize what's on the [documentation for this solution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html#migrate-from-oai-to-oac):
+
+1. Create the OAC resource.
+2. Create a new IAM policy resource.
+3. Update the new policy to allow OAC access.
+4. Update the bucket's resource policy to include *both* OAI ***and*** OAC policy statements.
+5. Test and deploy.
+6. Delete the OAI resource and corresponding policy for **OAI**.
+7. Test and deploy.
