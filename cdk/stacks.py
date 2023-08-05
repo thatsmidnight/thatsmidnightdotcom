@@ -66,15 +66,21 @@ class MyStaticSiteStack(Stack):
             ],
         )
 
-        # Create Cloudfront user and grant read on root domain bucket
+        # Create OAI and grant read on root domain bucket
         cloudfront_oai = constructs.MyCloudFrontOAI(
             self,
             "my-cloudfront-oai",
             comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
         )
-
-        # Grant OAI read access to root domain bucket
         my_bucket.grant_read(cloudfront_oai)
+
+        # Create origin access control for distribution to access bucket
+        cloudfront_oac = constructs.MyCloudFrontOAC(
+            self,
+            "my-cloudfront-oac",
+            name="MyCloudFrontOAC",
+            description=f"CloudFront OAC for {enums.MyDomainName.domain_name.value}",
+        )
 
         # Create CloudFront distribution
         distribution = constructs.MyDistribution(
