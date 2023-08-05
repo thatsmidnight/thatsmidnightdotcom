@@ -1,8 +1,8 @@
 # Builtin
 from enum import Enum
 from os import getenv
-from typing import List, Optional
-from dataclasses import dataclass
+from typing import List, Optional, Any
+from dataclasses import dataclass, fields
 
 # Try to load a .env file (local only)
 try:
@@ -58,9 +58,28 @@ class OriginAccessControlSigningBehavior(Enum):
 
 # Data classes
 @dataclass
-class OACConfigPropertyDataClass:
+class DefaultValue:
+    value: Any
+
+
+@dataclass
+class MyDataClassBase:
+    def __post_init__(self):
+        # Loop through the dataclass fields
+        for field in fields(self):
+            # if a field of this data class defines a default value of type
+            # `DefaultVal`, then use its value in case the field after 
+            # initialization has either not changed or is None.
+            if isinstance(field.default, DefaultValue):
+                field_value = getattr(self, field.name)
+                if isinstance(field_value, DefaultValue) or field_value is None:
+                    setattr(self, field.name, field.default.value)
+
+
+@dataclass
+class OACConfigPropertyDataClass(MyDataClassBase):
     name: str
-    origin_access_control_origin_type: OriginAccessControlOriginType = "s3"
-    signing_behavior: OriginAccessControlSigningBehavior = "always"
-    signing_protocol: str = "sigv4"
-    description: Optional[str] = None
+    origin_access_control_origin_type: OriginAccessControlOriginType = DefaultValue("s3")
+    signing_behavior: OriginAccessControlSigningBehavior = DefaultValue("always")
+    signing_protocol: str = DefaultValue("sigv4")
+    description: str = DefaultValue(None)
