@@ -4,6 +4,7 @@ from aws_cdk import (
     Stack,
     Duration,
     aws_s3 as s3,
+    aws_iam as iam,
     aws_cloudfront as cf,
     aws_route53 as route53,
     aws_certificatemanager as cm,
@@ -93,6 +94,33 @@ class MyStaticSiteStack(Stack):
             ],
             default_root_object="index.html",
             certificate=cert,
+        )
+
+        # Create OAC policy document and add to bucket resource policy
+        my_bucket.add_to_resource_policy(
+            constructs.MyPolicyStatement(
+                sid="AllowCloudFrontServicePrincipalReadOnly",
+                principals=[
+                    iam.ServicePrincipal(
+                        service="cloudfront.amazonaws.com",
+                        conditions={
+                            "StringEquals": {
+                                "AWS:SourceArn": Stack.of(self).format_arn(
+                                    region="",
+                                    service="cloudfront",
+                                    account=self.account,
+                                    resource="distribution",
+                                    resource_name=distribution.distribution_id,
+                                )
+                            }
+                        },
+                    ),
+                ],
+                actions=[
+                    enums.S3ResourcePolicyActions.get_object.value,
+                ],
+                resources=[f"{my_bucket.bucket_arn}/*"],
+            )
         )
 
         # Create CloudFront distribution A records
