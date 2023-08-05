@@ -78,28 +78,26 @@ class MyCloudFrontOAI(cf.OriginAccessIdentity):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
-class MyOACConfigProperty(cf.CfnOriginAccessControl.OriginAccessControlConfigProperty):
-    def __init__(
-        self,
-        oac_config_property_data_class=enums.OACConfigPropertyDataClass,
-    ) -> None:
-        super().__init__(**asdict(oac_config_property_data_class))
-
-
 class MyCloudFrontOAC(cf.CfnOriginAccessControl):
     def __init__(
         self,
         scope: Construct,
         id: str,
-        **oac_config_property_data_class: enums.OACConfigPropertyDataClass,
+        name: str,
+        origin_access_control_origin_type: Optional[enums.OriginAccessControlOriginType] = "s3",
+        signing_behavior: Optional[enums.OriginAccessControlSigningBehavior] = "no-override",
+        signing_protocol: Optional[str] = "sigv4",
+        description: Optional[str] = None,
     ) -> None:
         super().__init__(
             scope,
             id,
-            origin_access_control_config=MyOACConfigProperty(
-                enums.OACConfigPropertyDataClass(
-                    **oac_config_property_data_class
-                )
+            origin_access_control_config=cf.CfnOriginAccessControl.OriginAccessControlConfigProperty(
+                name=name,
+                origin_access_control_origin_type=origin_access_control_origin_type,
+                signing_behavior=signing_behavior,
+                signing_protocol=signing_protocol,
+                description=description,
             ),
         )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
