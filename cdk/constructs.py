@@ -14,6 +14,7 @@ from aws_cdk import (
     aws_route53 as route53,
     aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
+    aws_cloudfront_origins as origins,
 )
 
 # Library
@@ -103,16 +104,44 @@ class MyCloudFrontOAC(cf.CfnOriginAccessControl):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
+class MyBehaviorOptions(cf.BehaviorOptions):
+    def __init__(
+        self,
+        bucket: MyBucket,
+        compress: bool=True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    ) -> None:
+        super().__init__(
+            origin=origins.S3Origin(bucket),
+            compress=compress,
+            viewer_protocol_policy=viewer_protocol_policy,
+        )
+
+
 class MyDistribution(cf.Distribution):
     def __init__(
         self,
         scope: Construct,
         id: str,
+        bucket: MyBucket,
+        domain_names: List[str],
+        certificate: MyCertificate,
+        compress: bool=True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        default_root_object: str="index.html",
         **kwargs,
     ) -> None:
         super().__init__(
             scope,
             id,
+            domain_names=domain_names,
+            default_root_object=default_root_object,
+            certificate=certificate,
+            default_behavior=MyBehaviorOptions(
+                bucket=bucket,
+                compress=compress,
+                viewer_protocol_policy=viewer_protocol_policy,
+            ),
             **kwargs,
         )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
