@@ -26,3 +26,24 @@ python-dotenv = "^1.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+py_version = 310
+line_length = 79
+wrap_length = 0
+multi_line_output = 3
+use_parentheses = true
+combine_as_imports = true
+include_trailing_comma = true
+group_by_package = true
+atomic = true
+length_sort = true
+import_heading_future = "Future"
+import_heading_stdlib = "Standard Library"
+import_heading_thirdparty = "Third Party"
+import_heading_firstparty = "My Libraries"
+import_heading_localfolder = "Local Modules"
+
+[tool.black]
+line-length = 79
+target-version = ['py310']
