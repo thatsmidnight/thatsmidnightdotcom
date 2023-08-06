@@ -4,12 +4,11 @@ from aws_cdk import (
     Stack,
     Duration,
     aws_s3 as s3,
-    aws_cloudfront as cf,
+    aws_iam as iam,
     aws_route53 as route53,
     aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
     aws_route53_targets as targets,
-    aws_cloudfront_origins as origins,
 )
 
 # Library
@@ -65,44 +64,90 @@ class MyStaticSiteStack(Stack):
             ],
         )
 
-        # Create Cloudfront user and grant read on root domain bucket
-        cloudfront_oai = constructs.MyCloudFrontOAI(
+        # Create origin access control for distribution to access bucket
+        cloudfront_oac = constructs.MyCloudFrontOAC(
             self,
-            id,
-            comment=f"CloudFront OAI for {enums.MyDomainName.domain_name.value}",
-        )
-
-        # Create IAM policy statement to allow OAI access to S3 bucket
-        my_policy = constructs.MyPolicyStatement(
-            sid="Grant read and list from root domain bucket to OAI",
-            actions=enums.S3ResourcePolicyActions.values(),
-            resources=[
-                enums.MyDomainName.domain_name.value,
-                f"{enums.MyDomainName.domain_name.value}/*",
-            ],
-        )
-        my_policy.add_canonical_user_principal(
-            cloudfront_oai.cloud_front_origin_access_identity_s3_canonical_user_id
+            "my-cloudfront-oac",
+            name="MyCloudFrontOAC",
+            description=f"CloudFront OAC for {enums.MyDomainName.domain_name.value}",
         )
 
         # Create CloudFront distribution
         distribution = constructs.MyDistribution(
             self,
             "my-cloudfront-distribution",
-            default_behavior=cf.BehaviorOptions(
-                compress=True,
-                origin=origins.S3Origin(
-                    bucket=my_bucket,
-                    origin_access_identity=cloudfront_oai,
-                ),
-                viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            ),
+            bucket=my_bucket,
             domain_names=[
                 f"{enums.MyDomainName.domain_name.value}",
                 f"{enums.MyDomainName.subdomain_name.value}",
             ],
-            default_root_object="index.html",
             certificate=cert,
+        )
+
+        # Create OAC policy document and add to bucket resource policy
+        my_bucket.add_to_resource_policy(
+            constructs.MyPolicyStatement(
+                sid="AllowCloudFrontServicePrincipalReadOnly",
+                principals=[
+                    iam.ServicePrincipal(
+                        service="cloudfront.amazonaws.com",
+                        conditions={
+                            "StringEquals": {
+                                "AWS:SourceArn": Stack.of(self).format_arn(
+                                    region="",
+                                    service="cloudfront",
+                                    account=self.account,
+                                    resource="distribution",
+                                    resource_name=distribution.distribution_id,
+                                )
+                            }
+                        },
+                    ),
+                ],
+                actions=[
+                    enums.S3ResourcePolicyActions.get_object.value,
+                ],
+                resources=[f"{my_bucket.bucket_arn}/*"],
+            )
+        )
+        bucket_policy = my_bucket.policy
+        bucket_policy_document = bucket_policy.document
+
+        # Remove the OAI permission from the bucket policy
+        if isinstance(bucket_policy_document, iam.PolicyDocument):
+            bucket_policy_document_json = bucket_policy_document.to_json()
+            # Create updated policy without the OAI reference
+            bucket_policy_updated_json = {
+                "Version": "2012-10-17",
+                "Statement": [],
+            }
+            for statement in bucket_policy_document_json["Statement"]:
+                if "CanonicalUser" not in statement["Principal"]:
+                    bucket_policy_updated_json["Statement"].append(statement)
+
+        # Apply the updated bucket policy to the bucket
+        bucket_policy_override = my_bucket.node.find_child(
+            "Policy"
+        ).node.default_child
+        bucket_policy_override.add_override(
+            "Properties.PolicyDocument", bucket_policy_updated_json
+        )
+
+        # Remove the created OAI reference (S3 origin property) for the distribution
+        all_distribution_properties = distribution.node.find_all()
+        for child in all_distribution_properties:
+            if child.node.id == "S3Origin":
+                child.node.try_remove_child("Resource")
+
+        # Associate the created OAC with the distribution
+        distribution_properties = distribution.node.default_child
+        distribution_properties.add_override(
+            "Properties.DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity",
+            "",
+        )
+        distribution_properties.add_property_override(
+            "DistributionConfig.Origins.0.OriginAccessControlId",
+            cloudfront_oac.ref,
         )
 
         # Create CloudFront distribution A records

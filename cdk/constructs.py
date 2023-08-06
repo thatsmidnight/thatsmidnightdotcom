@@ -1,5 +1,6 @@
 # Builtin
 from os import getenv
+from dataclasses import asdict
 from typing import List, Optional
 
 # Third Party
@@ -13,7 +14,11 @@ from aws_cdk import (
     aws_route53 as route53,
     aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
+    aws_cloudfront_origins as origins,
 )
+
+# Library
+from cdk import enums
 
 
 class MyEnvironment(Environment):
@@ -74,16 +79,85 @@ class MyCloudFrontOAI(cf.OriginAccessIdentity):
         self.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
+class MyCloudFrontOAC(cf.CfnOriginAccessControl):
+    def __init__(
+        self,
+        scope: Construct,
+        id: str,
+        name: str,
+        origin_access_control_origin_type: Optional[
+            enums.OriginAccessControlOriginType
+        ] = "s3",
+        signing_behavior: Optional[
+            enums.OriginAccessControlSigningBehavior
+        ] = "no-override",
+        signing_protocol: Optional[str] = "sigv4",
+        description: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            scope,
+            id,
+            origin_access_control_config=cf.CfnOriginAccessControl.OriginAccessControlConfigProperty(
+                name=name,
+                origin_access_control_origin_type=origin_access_control_origin_type,
+                signing_behavior=signing_behavior,
+                signing_protocol=signing_protocol,
+                description=description,
+            ),
+        )
+        self.apply_removal_policy(RemovalPolicy.DESTROY)
+
+
+class MyBehaviorOptions(cf.BehaviorOptions):
+    def __init__(
+        self,
+        bucket: MyBucket,
+        compress: bool = True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy = cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowed_methods: cf.AllowedMethods = cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        cached_methods: cf.CachedMethods = cf.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+        cache_policy: cf.CachePolicy = cf.CachePolicy.CACHING_OPTIMIZED,
+        origin_request_policy: cf.OriginRequestPolicy = cf.OriginRequestPolicy.CORS_S3_ORIGIN,
+        response_headers_policy: cf.ResponseHeadersPolicy = cf.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+        **kwargs,
+    ) -> None:
+        super().__init__(
+            origin=origins.S3Origin(bucket),
+            compress=compress,
+            viewer_protocol_policy=viewer_protocol_policy,
+            allowed_methods=allowed_methods,
+            cached_methods=cached_methods,
+            cache_policy=cache_policy,
+            origin_request_policy=origin_request_policy,
+            response_headers_policy=response_headers_policy,
+            **kwargs,
+        )
+
+
 class MyDistribution(cf.Distribution):
     def __init__(
         self,
         scope: Construct,
         id: str,
+        bucket: MyBucket,
+        domain_names: List[str],
+        certificate: MyCertificate,
+        compress: bool = True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy = cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        default_root_object: str = "index.html",
         **kwargs,
     ) -> None:
         super().__init__(
             scope,
             id,
+            domain_names=domain_names,
+            default_root_object=default_root_object,
+            certificate=certificate,
+            default_behavior=MyBehaviorOptions(
+                bucket=bucket,
+                compress=compress,
+                viewer_protocol_policy=viewer_protocol_policy,
+            ),
             **kwargs,
         )
         self.apply_removal_policy(RemovalPolicy.DESTROY)
