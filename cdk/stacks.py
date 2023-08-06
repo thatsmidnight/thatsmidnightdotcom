@@ -1,18 +1,18 @@
 # Third Party
-from constructs import Construct
 from aws_cdk import (
     Stack,
     Duration,
     aws_s3 as s3,
     aws_iam as iam,
     aws_route53 as route53,
-    aws_certificatemanager as cm,
     aws_s3_deployment as s3_deploy,
     aws_route53_targets as targets,
+    aws_certificatemanager as cm,
 )
+from constructs import Construct
 
-# Library
-from cdk import constructs, enums
+# My Libraries
+from cdk import enums, constructs
 
 
 class MyStaticSiteStack(Stack):
