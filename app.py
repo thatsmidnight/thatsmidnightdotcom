@@ -1,27 +1,22 @@
 #!/usr/bin/env python
-# Builtin
-from os import environ
+# Standard Library
+from os import getenv
 
 # Third Party
 from aws_cdk import App
 
-# Try to load a .env file (local only)
-try:
-    from dotenv import load_dotenv
+if getenv("IS_LOCAL") == "true":
+    # Try to load .env
+    try:
+        # Third Party
+        from dotenv import load_dotenv
 
-    load_dotenv()
-except ImportError as e:
-    print("Error -> ", e)
+        load_dotenv()
+    except ImportError as e:
+        print("Error -> ", e)
 
-# Library
-from cdk import enums
+# My Libraries
 from cdk.stacks import MyStaticSiteStack
-
-# Set environment variables
-environ["AWS_ACCOUNT_ID"] = enums.AWS_ACCOUNT_ID
-environ["AWS_ACCESS_KEY_ID"] = enums.AWS_ACCESS_KEY_ID
-environ["AWS_SECRET_ACCESS_KEY"] = enums.AWS_SECRET_ACCESS_KEY
-
 
 # Initialize application
 app = App()
