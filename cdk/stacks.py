@@ -118,14 +118,17 @@ class MyStaticSiteStack(Stack):
             bucket_policy_document_json = bucket_policy_document.to_json()
             # Create updated policy without the OAI reference
             bucket_policy_updated_json = {
-                "Version": "2012-10-17", "Statement": []
+                "Version": "2012-10-17",
+                "Statement": [],
             }
             for statement in bucket_policy_document_json["Statement"]:
                 if "CanonicalUser" not in statement["Principal"]:
                     bucket_policy_updated_json["Statement"].append(statement)
 
         # Apply the updated bucket policy to the bucket
-        bucket_policy_override = my_bucket.node.find_child("Policy").node.default_child
+        bucket_policy_override = my_bucket.node.find_child(
+            "Policy"
+        ).node.default_child
         bucket_policy_override.add_override(
             "Properties.PolicyDocument", bucket_policy_updated_json
         )

@@ -85,8 +85,12 @@ class MyCloudFrontOAC(cf.CfnOriginAccessControl):
         scope: Construct,
         id: str,
         name: str,
-        origin_access_control_origin_type: Optional[enums.OriginAccessControlOriginType] = "s3",
-        signing_behavior: Optional[enums.OriginAccessControlSigningBehavior] = "no-override",
+        origin_access_control_origin_type: Optional[
+            enums.OriginAccessControlOriginType
+        ] = "s3",
+        signing_behavior: Optional[
+            enums.OriginAccessControlSigningBehavior
+        ] = "no-override",
         signing_protocol: Optional[str] = "sigv4",
         description: Optional[str] = None,
     ) -> None:
@@ -108,8 +112,8 @@ class MyBehaviorOptions(cf.BehaviorOptions):
     def __init__(
         self,
         bucket: MyBucket,
-        compress: bool=True,
-        viewer_protocol_policy: cf.ViewerProtocolPolicy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        compress: bool = True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy = cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         allowed_methods: cf.AllowedMethods = cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         cached_methods: cf.CachedMethods = cf.CachedMethods.CACHE_GET_HEAD_OPTIONS,
         cache_policy: cf.CachePolicy = cf.CachePolicy.CACHING_OPTIMIZED,
@@ -138,9 +142,9 @@ class MyDistribution(cf.Distribution):
         bucket: MyBucket,
         domain_names: List[str],
         certificate: MyCertificate,
-        compress: bool=True,
-        viewer_protocol_policy: cf.ViewerProtocolPolicy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        default_root_object: str="index.html",
+        compress: bool = True,
+        viewer_protocol_policy: cf.ViewerProtocolPolicy = cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        default_root_object: str = "index.html",
         **kwargs,
     ) -> None:
         super().__init__(

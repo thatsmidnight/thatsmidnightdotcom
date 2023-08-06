@@ -68,18 +68,25 @@ class MyDataClassBase:
         # Loop through the dataclass fields
         for field in fields(self):
             # if a field of this data class defines a default value of type
-            # `DefaultVal`, then use its value in case the field after 
+            # `DefaultVal`, then use its value in case the field after
             # initialization has either not changed or is None.
             if isinstance(field.default, DefaultValue):
                 field_value = getattr(self, field.name)
-                if isinstance(field_value, DefaultValue) or field_value is None:
+                if (
+                    isinstance(field_value, DefaultValue)
+                    or field_value is None
+                ):
                     setattr(self, field.name, field.default.value)
 
 
 @dataclass
 class OACConfigPropertyDataClass(MyDataClassBase):
     name: str
-    origin_access_control_origin_type: OriginAccessControlOriginType = DefaultValue("s3")
-    signing_behavior: OriginAccessControlSigningBehavior = DefaultValue("always")
+    origin_access_control_origin_type: OriginAccessControlOriginType = (
+        DefaultValue("s3")
+    )
+    signing_behavior: OriginAccessControlSigningBehavior = DefaultValue(
+        "always"
+    )
     signing_protocol: str = DefaultValue("sigv4")
     description: str = DefaultValue(None)
