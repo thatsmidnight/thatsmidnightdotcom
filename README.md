@@ -19,7 +19,7 @@ The table below shows all the *relevant* resources deployed by this CDK stack.
 | S3 bucket | `thatsmidnight.com` | S3 bucket holding all the static files for our website |
 | Certificate | `my-domain-certificate` | The certificate that provides access to the private S3 bucket via CloudFront |
 | CloudFront Distribution | `my-cloudfront-distribution` | A CloudFront distribution to provide our web content to users with low latency via edge locations |
-| CloudFront Origin Access Identity (legacy) | `my-static-website-stack` | Access resource to send authenticated requests to the Amazon S3 origin from CloudFront |
+| CloudFront Origin Access Control | `MyCloudFrontOAC` | Access resource to send authenticated requests to the Amazon S3 origin from CloudFront |
 | Route 53 Record set | `my-cf-a-record`, `my-subdomain-cf-a-record` | Route 53 hosted zone A records for the root domain and subdomain (`www`) |
 
 ![A very clear, and not confusing at all, diagram of the CloudFormation template](resources/template1-designer.png)
@@ -59,11 +59,11 @@ When you create a distribution, you have to tell it what the **origin** is. In t
 
 When you put all these resources together, you can rest easy knowing that any user accessing your content will be able to do it quickly, safely, and securely.
 
-... Except for the fact that we're using [OAI and not OAC](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html).
+... Except for the fact that we were using [OAI and not OAC](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html).
 
 ## OAI vs OAC
 
-While our users are still being authenticated, **origin access identity** (OAI) is legacy and **origin access control** (OAC) is recommended. The specific reasons why are covered [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html). None of this should matter to you, however, if your origin is an S3 bucket that's configured *as a [website endpoint](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html)*, this doesn't apply to you.
+**Origin access identity** (OAI) is a legacy resource and **origin access control** (OAC) is recommended. The specific reasons why are covered [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html). None of this should matter to you, however, if your origin is an S3 bucket that's configured *as a [website endpoint](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html)*.
 
 Since this is on the roadmap, I'll summarize what's on the [documentation for this solution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html#migrate-from-oai-to-oac):
 
@@ -74,3 +74,7 @@ Since this is on the roadmap, I'll summarize what's on the [documentation for th
 5. Test and deploy.
 6. Delete the OAI resource and corresponding policy for **OAI**.
 7. Test and deploy.
+
+This documentation provides a console/CloudFormation/CLI/API perspective on how to do this, but, when you look at the example I linked below, you'll notice that there are some steps missing.
+
+Linked [here](https://github.com/aws/aws-cdk/issues/21771#issuecomment-1567647338) is a step-by-step example of how to replace an OAI with an OAC - this is the example that I pulled from to make this switch.
