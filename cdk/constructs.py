@@ -1,23 +1,22 @@
-# Builtin
+# Standard Library
 from os import getenv
-from dataclasses import asdict
 from typing import List, Optional
 
 # Third Party
-from constructs import Construct
 from aws_cdk import (
     Environment,
     RemovalPolicy,
     aws_s3 as s3,
     aws_iam as iam,
-    aws_cloudfront as cf,
     aws_route53 as route53,
-    aws_certificatemanager as cm,
+    aws_cloudfront as cf,
     aws_s3_deployment as s3_deploy,
+    aws_certificatemanager as cm,
     aws_cloudfront_origins as origins,
 )
+from constructs import Construct
 
-# Library
+# My Libraries
 from cdk import enums
 
 

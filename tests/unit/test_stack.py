@@ -1,6 +1,8 @@
+# Third Party
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
+# My Libraries
 from cdk.stacks import MyStaticSiteStack as MyStack
 
 
