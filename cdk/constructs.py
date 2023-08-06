@@ -110,11 +110,23 @@ class MyBehaviorOptions(cf.BehaviorOptions):
         bucket: MyBucket,
         compress: bool=True,
         viewer_protocol_policy: cf.ViewerProtocolPolicy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowed_methods: cf.AllowedMethods = cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        cached_methods: cf.CachedMethods = cf.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+        cache_policy: cf.CachePolicy = cf.CachePolicy.CACHING_OPTIMIZED,
+        origin_request_policy: cf.OriginRequestPolicy = cf.OriginRequestPolicy.CORS_S3_ORIGIN,
+        response_headers_policy: cf.ResponseHeadersPolicy = cf.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+        **kwargs,
     ) -> None:
         super().__init__(
             origin=origins.S3Origin(bucket),
             compress=compress,
             viewer_protocol_policy=viewer_protocol_policy,
+            allowed_methods=allowed_methods,
+            cached_methods=cached_methods,
+            cache_policy=cache_policy,
+            origin_request_policy=origin_request_policy,
+            response_headers_policy=response_headers_policy,
+            **kwargs,
         )
 
 
