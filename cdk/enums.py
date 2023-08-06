@@ -1,17 +1,7 @@
 # Builtin
 from enum import Enum
-from os import getenv
-from typing import List, Optional, Any
-from dataclasses import dataclass, fields
-
-# Try to load a .env file (local only)
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except ImportError as e:
-    print("Error -> ", e)
-
+from typing import Any, List, Optional
+from dataclasses import fields, dataclass
 
 # Static
 AWS_ACCOUNT_ID = getenv("AWS_ACCOUNT_ID")
