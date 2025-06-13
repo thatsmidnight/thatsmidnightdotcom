@@ -1,70 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
-  <div class="bg-image" style="background-image: url('img/bg1.png');background-repeat: repeat;">
-    <head>
-      <meta charset="utf-8">
-      <title>ThatsMidnight's Website!</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="description" content="The permanent socials, various links, and info of ThatsMidnight!" />
-      <meta name="author" content="ThatsMidnight">
-      <meta name="keywords" content="thatsmidnight, midnight, music, english, crow, bird, vtuber, engineer, programmer, musician" >
-      <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-      <link href="bootstrap.css" rel="stylesheet">
-    </head>
-    <body id="top" class="preview" data-spy="scroll" data-target=".subnav" data-offset="80">
-      <div class="container">
-        <header class="jumbotron subhead" id="overview">
-          <div class="row">
-            <div class="span9">
-              <h1>Welcome to ThatsMidnight's super cool website :)</h1>
-              <p class="lead">The permanent socials, various links, and info of ThatsMidnight!</p>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ThatsMidnight's Portfolio</title>
+    <meta name="description" content="Professional portfolio of ThatsMidnight - Backend Python Developer and Hobbyist Musician">
+    <meta name="author" content="ThatsMidnight">
+    <meta name="keywords" content="thatsmidnight, midnight, chad, software engineer, backend, python developer, developer, python, programmer, musician, portfolio">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --accent-color: #0ea5e9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 12px 30px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            padding: 12px 30px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .social-links {
+            background-color: var(--bg-light);
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            color: var(--secondary-color);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer {
+            background-color: var(--text-primary);
+            color: white;
+            padding: 40px 0;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-padding {
+                padding: 60px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">ThatsMidnight</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
             </div>
-          </div>
-        </header>
-      </div>
-      <br>
-      <center>Pronons: he/him/his</center>
-      <br>
-      <br>
-      <br>
-      <section id="soundcloud" style="padding-top: 0">
-        <div class="page-header">
-          <h1>SoundCloud</h1>
         </div>
-        Check out my latest track on SoundCloud below ;)
-        <br>
-        <iframe width="50%" height="166" scrolling="no" frameborder="yes" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1555834507&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/thatsmidnight" title="ThatsMidnight" target="_blank" style="color: #cccccc; text-decoration: none;">ThatsMidnight</a> · <a href="https://soundcloud.com/thatsmidnight/spring-lambs" title="Spring Lambs" target="_blank" style="color: #cccccc; text-decoration: none;">Spring Lambs</a></div>
-      </section>
-      <br>
-      <section id="discord" style="padding-top: 0">
-        <div class="page-header">
-          <h1>Discord</h1>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8 hero-content">
+                    <h1 class="hero-title">ThatsMidnight (Chad)</h1>
+                    <p class="hero-subtitle">Backend Python Developer • Hobbyist Musician</p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="#projects" class="btn btn-primary btn-lg">View My Work</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">Get In Touch</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <center><img src="img/construction.gif"></center>
-      </section>
-      <br>
-      <section id="typography" style="padding-top: 0">
-        <div class="page-header">
-          <h1>Socials</h1>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h3 class="mb-4">Hello, I'm ThatsMidnight, but you can call me Chad 😀</h3>
+                    <p class="lead mb-4">A passionate software engineer and creative professional with expertise in backend Python development.</p>
+                    <p>I combine technical skills with creative vision to build meaningful projects and engage with communities. Whether it's developing software solutions or creating music, I approach everything with dedication and attention to detail.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <div class="feature-icon mx-auto">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <h5>Python Development</h5>
+                                <p class="text-muted">Building robust backend Python applications and solutions</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <div class="feature-icon mx-auto">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <h5>Music</h5>
+                                <p class="text-muted">Creating original compositions and covering favorite tunes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul>
-          <li><a href="https://twitter.com/thatsmidnight_">Twitter</a></li>
-          <li><a href="https://soundcloud.com/thatsmidnight">SoundCloud</a></li>
-          <li><a href="https://github.com/thatsmidnight">GitHub</a></li>
-          <li><a href="https://www.instagram.com/thatsmidnight/">Instagram</a></li>
-          <li><a href="https://www.tumblr.com/thatsmidnight">Tumblr</a></li>
-          <li><a href="https://www.youtube.com/@thatsmidnight">YouTube</a></li>
-          <li><a href="https://www.twitch.tv/succfarmer">Twitch</a></li>
-          <li><a href="https://thatsmidnight.carrd.co/">My Carrd</a></li>
-        </ul>
-      </section>
-      <br>
-      <br>
-      <footer class="footer">
-        <p class="pull-right" style="margin-top: -14px"><img src="img/7upspot.gif">&nbsp; Built with <a href="https://code.divshot.com/geo-bootstrap/">Geo for Bootstrap</a></p>
-      </footer>
-      <center><img src="img/counter.gif"></center>
-      <script src="theme-control.js"></script>
-    </body>
-  </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section-padding bg-light">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h5 class="card-title">Arcane Scribe</h5>
+                            <p class="card-text">A TTRPG Rulebook RAG System served by an HTTP API Gateway.</p>
+                            <a href="https://github.com/thatsmidnight/Arcane-Scribe" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-clipboard"></i>
+                            </div>
+                            <h5 class="card-title">Automated Taskmaster</h5>
+                            <p class="card-text">Simple FastAPI application that creates an encounter of monsters given a set of parameters.</p>
+                            <a href="https://github.com/thatsmidnight/Automated-Taskmaster" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-map"></i>
+                            </div>
+                            <h5 class="card-title">Cartographers Cloud Kit</h5>
+                            <p class="card-text">A web application allowing Game Masters (GMs) to upload, tag, search, and manage small digital assets like map icons, NPC portraits, location images, art snippets, or short pieces of read-aloud text.</p>
+                            <a href="https://github.com/thatsmidnight/Cartographers-Cloud-Kit" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h5 class="card-title">This Website! 😛</h5>
+                            <p class="card-text">Repository for ThatsMidnight's personal static website hosted on S3.</p>
+                            <a href="https://github.com/thatsmidnight/thatsmidnightdotcom" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-house"></i>
+                            </div>
+                            <h5 class="card-title">My DDNS Updater</h5>
+                            <p class="card-text">This is a simple, automated service that resolves my DDNS hostname to get my public IP address and update an SSM Parameter to use with a custom whitelisting authorizer.</p>
+                            <a href="https://github.com/thatsmidnight/My-DDNS-Updater" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <h5 class="card-title">Music Projects</h5>
+                            <p class="card-text">Original compositions, covers, and audio production showcasing creative versatility.</p>
+                            <a href="https://soundcloud.com/thatsmidnight" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Links Section -->
+    <section class="social-links section-padding">
+        <div class="container">
+            <h2 class="section-title">Connect With Me</h2>
+            <div class="text-center">
+                <a href="https://github.com/ThatsMidnight" class="social-link" title="GitHub">
+                    <i class="fab fa-github"></i>
+                <a href="#" class="social-link" title="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center">
+                        <p class="lead mb-4">Interested in collaborating or have a project in mind? I'd love to hear from you!</p>
+                        <a href="mailto:thatsmidnight@thatsmidnight.com" class="btn btn-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Send Me an Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 ThatsMidnight. Built with passion and modern web technologies.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Smooth scrolling for anchor links -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    </script>
+</body>
 </html>

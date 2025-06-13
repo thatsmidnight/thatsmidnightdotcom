@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "thatsmidnightdotcom"
-version = "0.1.0"
+version = "0.2.0"
 description = "Repository for ThatsMidnight's personal static website hosted on S3."
 authors = ["thatsmidnight <10793854+thatsmidnight@users.noreply.github.com>"]
 license = "Creative Commons Zero v1.0 Universal"
