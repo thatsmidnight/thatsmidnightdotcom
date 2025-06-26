@@ -2,7 +2,7 @@
 from os import getenv
 from enum import Enum
 from typing import Any, List, Optional
-from dataclasses import fields, dataclass
+from dataclasses import fields, dataclass, field
 
 # Static
 AWS_ACCOUNT_ID = getenv("AWS_ACCOUNT_ID")
@@ -57,27 +57,29 @@ class DefaultValue:
 class MyDataClassBase:
     def __post_init__(self):
         # Loop through the dataclass fields
-        for field in fields(self):
+        for field_ in fields(self):
             # if a field of this data class defines a default value of type
             # `DefaultVal`, then use its value in case the field after
             # initialization has either not changed or is None.
-            if isinstance(field.default, DefaultValue):
-                field_value = getattr(self, field.name)
+            if isinstance(field_.default, DefaultValue):
+                field_value = getattr(self, field_.name)
                 if (
                     isinstance(field_value, DefaultValue)
                     or field_value is None
                 ):
-                    setattr(self, field.name, field.default.value)
+                    setattr(self, field_.name, field_.default.value)
 
 
 @dataclass
 class OACConfigPropertyDataClass(MyDataClassBase):
     name: str
-    origin_access_control_origin_type: OriginAccessControlOriginType = (
-        DefaultValue("s3")
+    origin_access_control_origin_type: OriginAccessControlOriginType = field(
+        default_factory=lambda: OriginAccessControlOriginType.s3
     )
-    signing_behavior: OriginAccessControlSigningBehavior = DefaultValue(
-        "always"
+    signing_behavior: Any = field(
+        default_factory=lambda: DefaultValue("always")
     )
-    signing_protocol: str = DefaultValue("sigv4")
-    description: str = DefaultValue(None)
+    signing_protocol: Any = field(
+        default_factory=lambda: DefaultValue("sigv4")
+    )
+    description: Any = field(default_factory=lambda: DefaultValue(None))

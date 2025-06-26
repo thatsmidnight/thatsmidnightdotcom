@@ -1,4 +1,5 @@
 # Third Party
+from unittest.mock import patch
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
@@ -6,7 +7,8 @@ import aws_cdk.assertions as assertions
 from cdk.stacks import MyStaticSiteStack as MyStack
 
 
-def test_s3_bucket_created():
+@patch("cdk.stacks.enums.HOSTED_ZONE_ID", new_callable=lambda: "Z1234567890ABC")
+def test_s3_bucket_created(mocked_hosted_zone_id):
     app = core.App()
     stack = MyStack(app, "thatsmidnightdotcom", stack_name="test-stack-name")
     template = assertions.Template.from_stack(stack)

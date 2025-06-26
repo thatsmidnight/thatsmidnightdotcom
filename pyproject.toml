@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "thatsmidnightdotcom"
-version = "0.2.1"
+version = "0.3.0"
 description = "Repository for ThatsMidnight's personal, static website hosted on S3."
 authors = ["thatsmidnight <10793854+thatsmidnight@users.noreply.github.com>"]
 license = "Creative Commons Zero v1.0 Universal"
@@ -10,25 +10,24 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-aws-cdk-lib = "^2.89.0"
-
+python = "~3.12"
+aws-cdk-lib = "^2.202.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
-pytest = "^7.4.0"
-coverage = "^7.2.7"
+black = "^23.12.1"
+pytest = "^7.4.4"
+coverage = "^7.9.1"
 pytest-cov = "^4.1.0"
-pylint = "^2.17.5"
+pylint = "^2.17.7"
 poethepoet = "^0.21.1"
-python-dotenv = "^1.0.0"
+python-dotenv = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
-py_version = 310
+py_version = 312
 line_length = 79
 wrap_length = 0
 multi_line_output = 3
@@ -46,4 +45,4 @@ import_heading_localfolder = "Local Modules"
 
 [tool.black]
 line-length = 79
-target-version = ['py310']
+target-version = ['py312']

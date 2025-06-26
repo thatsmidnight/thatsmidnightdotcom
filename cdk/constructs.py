@@ -121,7 +121,7 @@ class MyBehaviorOptions(cf.BehaviorOptions):
         **kwargs,
     ) -> None:
         super().__init__(
-            origin=origins.S3Origin(bucket),
+            origin=origins.S3BucketOrigin(bucket),
             compress=compress,
             viewer_protocol_policy=viewer_protocol_policy,
             allowed_methods=allowed_methods,
